@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Se repérer sur la Terre : Géo Nakama</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Literata:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="entete">
+    <div class="conteneur">
+      <a class="logo" href="../index.html">Géo Nakama</a>
+      <nav class="navigation" aria-label="Navigation principale">
+        <a href="../index.html#niveaux">Les niveaux</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="lecon">
+    <div class="conteneur">
+
+      <p class="fil"><a href="../index.html">Accueil</a> / Débutant / Se repérer sur la Terre</p>
+
+      <div class="lecon-entete">
+        <h1>Se repérer sur la Terre</h1>
+        <p>Pour placer n'importe quel lieu sur une carte, il faut une adresse valable partout dans le monde : ses coordonnées.</p>
+      </div>
+
+      <section class="objectifs" aria-labelledby="objectifs-titre">
+        <h2 id="objectifs-titre">Objectifs de cette leçon</h2>
+        <ul>
+          <li>Lire et écrire une latitude et une longitude.</li>
+          <li>Savoir ce qu'est un système de référence comme WGS84.</li>
+          <li>Comprendre pourquoi aplatir le globe déforme toujours quelque chose.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 1. Latitude et longitude ===== -->
+      <section class="lecon-section" aria-labelledby="coord-titre">
+        <h2 id="coord-titre">Latitude et longitude</h2>
+        <p>La Terre est quadrillée par des lignes imaginaires. Deux nombres suffisent pour situer un point :</p>
+        <ul>
+          <li><strong>La latitude</strong> est l'angle vers le nord ou vers le sud, mesuré depuis l'<strong>équateur</strong>. Elle va de 0° à 90° N (pôle Nord) ou 90° S (pôle Sud). Les lignes de même latitude s'appellent les <strong>parallèles</strong>.</li>
+          <li><strong>La longitude</strong> est l'angle vers l'est ou vers l'ouest, mesuré depuis le <strong>méridien de Greenwich</strong>. Elle va de 0° à 180° E ou 180° O. Les lignes de même longitude, qui relient les deux pôles, s'appellent les <strong>méridiens</strong>.</li>
+        </ul>
+        <p>Dakar se trouve à environ <strong>14,7° N, 17,4° O</strong> : un peu au nord de l'équateur, et à l'ouest du méridien de Greenwich.</p>
+      </section>
+
+      <!-- ===== 2. Illustration interactive ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="demo-titre">
+        <h2 id="demo-titre">À vous de jouer : placez un point</h2>
+        <p>Choisissez un lieu, ou déplacez les deux curseurs. Le même point apparaît sur le globe et sur la carte plate. La ligne <span style="color:#8a6200;font-weight:600">jaune</span> est l'équateur, la ligne <span style="color:#2a6f97;font-weight:600">bleue</span> est le méridien de Greenwich.</p>
+
+        <div class="demo">
+          <div class="onglets" role="group" aria-label="Lieux prédéfinis">
+            <button type="button" class="onglet lieu" data-nom="Dakar" data-lat="14.7" data-lon="-17.4">Dakar</button>
+            <button type="button" class="onglet lieu" data-nom="Paris" data-lat="48.9" data-lon="2.4">Paris</button>
+            <button type="button" class="onglet lieu" data-nom="Tokyo" data-lat="35.7" data-lon="139.7">Tokyo</button>
+            <button type="button" class="onglet lieu" data-nom="Nairobi" data-lat="-1.3" data-lon="36.8">Nairobi</button>
+            <button type="button" class="onglet lieu" data-nom="Rio de Janeiro" data-lat="-22.9" data-lon="-43.2">Rio de Janeiro</button>
+          </div>
+
+          <div class="demo-panneaux">
+            <figure class="panneau" style="margin:0">
+              <figcaption>Le globe</figcaption>
+              <svg id="svg-globe" viewBox="0 0 200 200" role="img" aria-label="Le globe terrestre avec son quadrillage et le point choisi">
+                <circle cx="100" cy="100" r="90" fill="#dce9ef" stroke="#14313b" stroke-width="2"/>
+                <g id="quadrillage-globe" fill="none" stroke-linecap="round"></g>
+                <circle id="point-globe" r="5" fill="#b3412e" stroke="#ffffff" stroke-width="1.5"/>
+              </svg>
+            </figure>
+
+            <figure class="panneau" style="margin:0">
+              <figcaption>La carte plate</figcaption>
+              <svg id="svg-plate" viewBox="-42 -12 422 214" role="img" aria-label="La carte plate du monde avec son quadrillage et le point choisi">
+                <rect x="0" y="0" width="360" height="180" fill="#dce9ef" stroke="#14313b" stroke-width="1.5"/>
+                <g id="quadrillage-plat" fill="none"></g>
+                <g id="reperes-plat" font-family="Bricolage Grotesque, system-ui, sans-serif" font-size="11" fill="#14313b"></g>
+                <line id="trait-v" stroke="#b3412e" stroke-width="1" stroke-dasharray="3 3"/>
+                <line id="trait-h" stroke="#b3412e" stroke-width="1" stroke-dasharray="3 3"/>
+                <circle id="point-plat" r="5" fill="#b3412e" stroke="#ffffff" stroke-width="1.5"/>
+              </svg>
+            </figure>
+          </div>
+
+          <div class="demo-controle">
+            <label for="curseur-lat">Latitude</label>
+            <input type="range" id="curseur-lat" min="-90" max="90" step="0.1" value="14.7" aria-describedby="coord-texte">
+            <output id="valeur-lat" for="curseur-lat"></output>
+          </div>
+          <div class="demo-controle">
+            <label for="curseur-lon">Longitude</label>
+            <input type="range" id="curseur-lon" min="-180" max="180" step="0.1" value="-17.4" aria-describedby="coord-texte">
+            <output id="valeur-lon" for="curseur-lon"></output>
+          </div>
+
+          <p class="demo-message" id="coord-texte" aria-live="polite" style="min-height:8em"></p>
+        </div>
+      </section>
+
+      <!-- ===== 3. Notation et WGS84 ===== -->
+      <section class="lecon-section" aria-labelledby="notation-titre">
+        <h2 id="notation-titre">Écrire des coordonnées</h2>
+        <p>On peut écrire un angle de deux façons :</p>
+        <ul>
+          <li>en <strong>degrés décimaux</strong> : 14,7° N, 17,4° O (ou, avec des signes, 14,7 et −17,4 : le moins signifie sud ou ouest) ;</li>
+          <li>en <strong>degrés, minutes, secondes</strong> : 14° 41′ N, 17° 26′ O.</li>
+        </ul>
+        <p>Un point n'a de coordonnées précises que dans un <strong>système de référence</strong>, c'est-à-dire un modèle mathématique de la forme de la Terre. Le plus répandu est le <strong>WGS84</strong>, celui du GPS. Quand vous relevez un point avec un téléphone, ses coordonnées sont en WGS84.</p>
+
+        <div class="piege">
+          <strong>Attention à l'ordre.</strong> En français, on dit « latitude, longitude ». Mais beaucoup de logiciels de SIG attendent l'inverse : d'abord X (la longitude), puis Y (la latitude). Inverser les deux place votre point à l'autre bout du monde, un piège classique.
+        </div>
+      </section>
+
+      <!-- ===== 4. Projection ===== -->
+      <section class="lecon-section" aria-labelledby="projection-titre">
+        <h2 id="projection-titre">Aplatir le globe : la projection</h2>
+        <p>Essayez d'aplatir une écorce d'orange sur une table sans la déchirer ni l'étirer : impossible. Pour la Terre, c'est pareil. Une carte plate déforme forcément <strong>les surfaces, les distances, les angles ou les formes</strong>.</p>
+        <p>Le curseur de la démonstration le montre : sur le globe, les méridiens se rapprochent vers les pôles, donc 1° de longitude y est beaucoup plus court qu'à l'équateur. Sur la carte plate, il est dessiné de la même largeur partout.</p>
+        <p>La méthode choisie pour aplatir le globe s'appelle une <strong>projection</strong>. Chaque projection fait un compromis. Nous les comparerons en détail au niveau Intermédiaire.</p>
+      </section>
+
+      <!-- ===== 5. À retenir ===== -->
+      <section class="retenir" aria-labelledby="retenir-titre">
+        <h2 id="retenir-titre">À retenir</h2>
+        <ul>
+          <li>La latitude se mesure depuis l'équateur (nord ou sud), la longitude depuis Greenwich (est ou ouest).</li>
+          <li>Des coordonnées n'ont de sens que dans un système de référence, comme le WGS84 utilisé par le GPS.</li>
+          <li>Aplatir le globe déforme toujours quelque chose : c'est le rôle de la projection de choisir un compromis.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 6. Quiz ===== -->
+      <section class="lecon-section" id="quiz" aria-labelledby="quiz-titre">
+        <h2 id="quiz-titre">Quiz du module</h2>
+        <p>Quatre questions pour vérifier que c'est bien clair. Il faut au moins 3 bonnes réponses pour valider le module.</p>
+        <div id="quiz-conteneur" class="quiz"></div>
+      </section>
+
+      <nav class="nav-modules" aria-label="Navigation entre les modules">
+        <a class="nav-precedent" href="debutant-lire-une-carte.html" rel="prev"><span class="nav-etiquette">Module précédent</span>Lire une carte</a>
+        <a class="nav-suivant" href="debutant-vecteur-raster.html" rel="next"><span class="nav-etiquette">Module suivant</span>Vecteur et raster</a>
+      </nav>
+
+    </div>
+  </main>
+
+  <footer class="pied">
+    <div class="conteneur">
+      <p>Géo Nakama : un projet pour apprendre la géomatique par l'image.</p>
+    </div>
+  </footer>
+
+  <script src="../js/progress.js"></script>
+  <script src="../js/quiz.js"></script>
+
+  <!-- Les questions de CE module -->
+  <script>
+    creerQuiz(document.getElementById("quiz-conteneur"), {
+      id: "debutant-se-reperer-sur-la-terre",
+      seuil: 3,
+      questions: [
+        {
+          enonce: "Que mesure la latitude ?",
+          choix: [
+            "L'angle vers l'est ou l'ouest par rapport à Greenwich",
+            "La distance au pôle Nord, en kilomètres",
+            "L'angle vers le nord ou le sud par rapport à l'équateur",
+            "L'altitude par rapport au niveau de la mer"
+          ],
+          bonne: 2,
+          explication: "La latitude est un angle mesuré depuis l'équateur, vers le nord ou vers le sud. L'angle est-ouest, c'est la longitude."
+        },
+        {
+          enonce: "Dakar est à environ 14,7° N et 17,4° O. Où se situe-t-elle ?",
+          choix: [
+            "Hémisphère sud, à l'est de Greenwich",
+            "Hémisphère nord, à l'ouest de Greenwich",
+            "Hémisphère nord, à l'est de Greenwich",
+            "Hémisphère sud, à l'ouest de Greenwich"
+          ],
+          bonne: 1,
+          explication: "N signifie au nord de l'équateur, et O signifie à l'ouest du méridien de Greenwich."
+        },
+        {
+          enonce: "Quel système de référence est utilisé par le GPS ?",
+          choix: ["WGS84", "Greenwich", "Lambert-93", "Mercator"],
+          bonne: 0,
+          explication: "Le GPS fournit des coordonnées en WGS84. Greenwich est un méridien d'origine, et Mercator est une projection, pas un système de référence."
+        },
+        {
+          enonce: "Pourquoi une carte plate déforme-t-elle toujours quelque chose ?",
+          choix: [
+            "Parce que les satellites se trompent",
+            "Parce que les cartes sont dessinées à la main",
+            "Parce que la Terre change de forme chaque jour",
+            "Parce qu'on ne peut pas aplatir une sphère sans la déformer"
+          ],
+          bonne: 3,
+          explication: "Comme une écorce d'orange, une sphère ne s'aplatit pas sans être étirée ou déchirée. Toute projection fait donc un compromis."
+        }
+      ]
+    });
+  </script>
+
+  <!-- Script de la démonstration : un globe et une carte plate pour le même point
+       Idée : un point est décrit par (latitude, longitude). On le dessine de deux façons.
+       - Carte plate : x = longitude + 180, y = 90 - latitude (la plus simple des projections).
+       - Globe : projection « orthographique », qui montre la Terre comme vue de l'espace. -->
+  <script>
+    const DEG = Math.PI / 180;
+    const SVG_NS = "http://www.w3.org/2000/svg";
+    const RAYON = 90;                       // rayon du globe dans son dessin (200 x 200)
+
+    const curseurLat = document.getElementById("curseur-lat");
+    const curseurLon = document.getElementById("curseur-lon");
+    const valeurLat = document.getElementById("valeur-lat");
+    const valeurLon = document.getElementById("valeur-lon");
+    const texte = document.getElementById("coord-texte");
+
+    const groupeGlobe = document.getElementById("quadrillage-globe");
+    const pointGlobe = document.getElementById("point-globe");
+    const pointPlat = document.getElementById("point-plat");
+    const traitV = document.getElementById("trait-v");
+    const traitH = document.getElementById("trait-h");
+
+    let lieuActuel = "Dakar";
+
+    function creer(nom, attributs) {
+      const element = document.createElementNS(SVG_NS, nom);
+      Object.keys(attributs).forEach(function (cle) { element.setAttribute(cle, attributs[cle]); });
+      return element;
+    }
+
+    // ---------- Carte plate : le quadrillage ne change jamais, on le dessine une fois ----------
+    const grillePlate = document.getElementById("quadrillage-plat");
+    const reperesPlat = document.getElementById("reperes-plat");
+
+    for (let lon = -180; lon <= 180; lon += 30) {
+      let couleur = "#9db3a8", epaisseur = 0.6;
+      if (lon === 0) { couleur = "#2a6f97"; epaisseur = 2; }
+      grillePlate.appendChild(creer("line", { x1: lon + 180, y1: 0, x2: lon + 180, y2: 180, stroke: couleur, "stroke-width": epaisseur }));
+    }
+    for (let lat = -90; lat <= 90; lat += 30) {
+      let couleur = "#9db3a8", epaisseur = 0.6;
+      if (lat === 0) { couleur = "#e4a81c"; epaisseur = 2; }
+      grillePlate.appendChild(creer("line", { x1: 0, y1: 90 - lat, x2: 360, y2: 90 - lat, stroke: couleur, "stroke-width": epaisseur }));
+    }
+
+    // Repères chiffrés autour de la carte
+    [[-180, "180° O"], [-90, "90° O"], [0, "0°"], [90, "90° E"], [180, "180° E"]].forEach(function (r) {
+      const t = creer("text", { x: r[0] + 180, y: 194, "text-anchor": "middle" });
+      t.textContent = r[1];
+      reperesPlat.appendChild(t);
+    });
+    [[90, "90° N"], [0, "0°"], [-90, "90° S"]].forEach(function (r) {
+      // le repère « 90° S » est remonté un peu pour ne pas toucher « 180° O » en bas à gauche
+      const decalage = (r[0] === -90) ? -3 : 3;
+      const t = creer("text", { x: -4, y: 90 - r[0] + decalage, "text-anchor": "end" });
+      t.textContent = r[1];
+      reperesPlat.appendChild(t);
+    });
+
+    // ---------- Globe : projection orthographique ----------
+    // (lat0, lon0) est le point au centre du globe. On renvoie la position dans le dessin
+    // et si le point est visible (face à nous) ou caché derrière la Terre.
+    function projeterSurGlobe(lat, lon, lat0, lon0) {
+      const phi = lat * DEG;
+      const phi0 = lat0 * DEG;
+      const lambda = (lon - lon0) * DEG;
+      const visible = Math.sin(phi0) * Math.sin(phi) + Math.cos(phi0) * Math.cos(phi) * Math.cos(lambda) > 0;
+      const x = 100 + RAYON * Math.cos(phi) * Math.sin(lambda);
+      const y = 100 - RAYON * (Math.cos(phi0) * Math.sin(phi) - Math.sin(phi0) * Math.cos(phi) * Math.cos(lambda));
+      return { x: x, y: y, visible: visible };
+    }
+
+    // Trace une ligne du quadrillage en sautant les morceaux cachés derrière le globe
+    function tracerLigne(points, lat0, lon0, couleur, epaisseur) {
+      let d = "";
+      let precedentVisible = false;
+      points.forEach(function (p) {
+        const r = projeterSurGlobe(p[0], p[1], lat0, lon0);
+        if (r.visible) {
+          d += (precedentVisible ? "L" : "M") + r.x.toFixed(1) + " " + r.y.toFixed(1) + " ";
+        }
+        precedentVisible = r.visible;
+      });
+      if (d) {
+        groupeGlobe.appendChild(creer("path", { d: d, stroke: couleur, "stroke-width": epaisseur }));
+      }
+    }
+
+    function dessinerGlobe(lat0, lon0) {
+      groupeGlobe.replaceChildren();
+
+      // Les parallèles : un cercle tous les 30° de latitude
+      for (let lat = -60; lat <= 60; lat += 30) {
+        const points = [];
+        for (let lon = -180; lon <= 180; lon += 3) { points.push([lat, lon]); }
+        const equateur = (lat === 0);
+        tracerLigne(points, lat0, lon0, equateur ? "#e4a81c" : "#9db3a8", equateur ? 2 : 0.7);
+      }
+
+      // Les méridiens : un demi-cercle tous les 30° de longitude
+      for (let lon = -150; lon <= 180; lon += 30) {
+        const points = [];
+        for (let lat = -90; lat <= 90; lat += 3) { points.push([lat, lon]); }
+        const greenwich = (lon === 0);
+        tracerLigne(points, lat0, lon0, greenwich ? "#2a6f97" : "#9db3a8", greenwich ? 2 : 0.7);
+      }
+    }
+
+    // ---------- Mise à jour à chaque changement ----------
+    function formaterAngle(valeur) {
+      return Math.abs(valeur).toLocaleString("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    }
+
+    function mettreAJour() {
+      const lat = Number(curseurLat.value);
+      const lon = Number(curseurLon.value);
+
+      // Le globe est tourné pour que le point soit toujours visible
+      const lat0 = lat / 2;
+      const lon0 = lon;
+      dessinerGlobe(lat0, lon0);
+      const p = projeterSurGlobe(lat, lon, lat0, lon0);
+      pointGlobe.setAttribute("cx", p.x);
+      pointGlobe.setAttribute("cy", p.y);
+
+      // Carte plate
+      const x = lon + 180;
+      const y = 90 - lat;
+      pointPlat.setAttribute("cx", x);
+      pointPlat.setAttribute("cy", y);
+      traitV.setAttribute("x1", x); traitV.setAttribute("y1", y); traitV.setAttribute("x2", x); traitV.setAttribute("y2", 180);
+      traitH.setAttribute("x1", 0); traitH.setAttribute("y1", y); traitH.setAttribute("x2", x); traitH.setAttribute("y2", y);
+
+      // Valeurs affichées à côté des curseurs
+      const ns = lat > 0 ? " N" : (lat < 0 ? " S" : "");
+      const eo = lon > 0 ? " E" : (lon < 0 ? " O" : "");
+      valeurLat.textContent = formaterAngle(lat) + "°" + ns;
+      valeurLon.textContent = formaterAngle(lon) + "°" + eo;
+
+      // Phrase de lecture
+      let hemisphere = "sur l'équateur";
+      if (lat > 0) hemisphere = "dans l'hémisphère nord";
+      if (lat < 0) hemisphere = "dans l'hémisphère sud";
+      let cote = "sur le méridien de Greenwich";
+      if (lon > 0) cote = "à l'est du méridien de Greenwich";
+      if (lon < 0) cote = "à l'ouest du méridien de Greenwich";
+      if (Math.abs(lon) === 180) cote = "sur l'antiméridien, à l'opposé de Greenwich";
+
+      const km = 111.32 * Math.cos(lat * DEG);
+      let deformation;
+      if (Math.abs(lat) < 1) {
+        deformation = "À l'équateur, 1° de longitude mesure environ 111 km : la carte plate n'y déforme presque pas les distances est-ouest.";
+      } else {
+        deformation = "À cette latitude, 1° de longitude mesure environ " + Math.round(km).toLocaleString("fr-FR") +
+                      " km, contre 111 km à l'équateur. Sur la carte plate, il garde pourtant la même largeur : c'est une déformation.";
+      }
+
+      texte.textContent = (lieuActuel ? lieuActuel + " : " : "") + "ce point est " + hemisphere + ", " + cote + ". " + deformation;
+    }
+
+    curseurLat.addEventListener("input", function () { lieuActuel = null; mettreAJour(); });
+    curseurLon.addEventListener("input", function () { lieuActuel = null; mettreAJour(); });
+
+    document.querySelectorAll(".lieu").forEach(function (bouton) {
+      bouton.addEventListener("click", function () {
+        curseurLat.value = bouton.dataset.lat;
+        curseurLon.value = bouton.dataset.lon;
+        lieuActuel = bouton.dataset.nom;
+        mettreAJour();
+      });
+    });
+
+    mettreAJour();
+  </script>
+
+</body>
+</html>

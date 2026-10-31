@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiz final du niveau Débutant : Géo Nakama</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Literata:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="entete">
+    <div class="conteneur">
+      <a class="logo" href="../index.html">Géo Nakama</a>
+      <nav class="navigation" aria-label="Navigation principale">
+        <a href="../index.html#niveaux">Les niveaux</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="lecon">
+    <div class="conteneur">
+
+      <p class="fil"><a href="../index.html">Accueil</a> / Débutant / Quiz final</p>
+
+      <div class="lecon-entete">
+        <h1>Quiz final du niveau Débutant</h1>
+        <p>Huit questions qui reprennent tout le niveau. Avec 6 bonnes réponses ou plus, le niveau Intermédiaire s'ouvre.</p>
+      </div>
+
+      <!-- ===== État des modules ===== -->
+      <section class="lecon-section" aria-labelledby="etat-titre">
+        <h2 id="etat-titre">Vos modules</h2>
+        <ol class="liste-elements" id="liste-modules"></ol>
+        <p id="etat-message" aria-live="polite"></p>
+      </section>
+
+      <!-- ===== Le quiz (affiché seulement si les 5 modules sont validés) ===== -->
+      <section class="lecon-section" id="quiz" aria-labelledby="quiz-titre" hidden>
+        <h2 id="quiz-titre">Les questions</h2>
+        <div id="quiz-conteneur" class="quiz"></div>
+      </section>
+
+      <nav class="nav-modules" aria-label="Navigation entre les modules">
+        <a class="nav-precedent" href="debutant-d-ou-viennent-les-donnees.html" rel="prev"><span class="nav-etiquette">Module précédent</span>D'où viennent les données ?</a>
+        <a class="nav-suivant" href="../index.html#niveaux" rel="next"><span class="nav-etiquette">Et ensuite ?</span>Retour aux niveaux</a>
+      </nav>
+
+    </div>
+  </main>
+
+  <footer class="pied">
+    <div class="conteneur">
+      <p>Géo Nakama : un projet pour apprendre la géomatique par l'image.</p>
+    </div>
+  </footer>
+
+  <script src="../js/progress.js"></script>
+  <script src="../js/quiz.js"></script>
+
+  <script>
+    // Les 5 modules du niveau, avec leur identifiant (le même que dans chaque leçon)
+    const MODULES = [
+      { id: "debutant-quest-ce-que-la-geomatique",  titre: "C'est quoi la géomatique ?",   page: "debutant-quest-ce-que-la-geomatique.html" },
+      { id: "debutant-lire-une-carte",              titre: "Lire une carte",               page: "debutant-lire-une-carte.html" },
+      { id: "debutant-se-reperer-sur-la-terre",     titre: "Se repérer sur la Terre",      page: "debutant-se-reperer-sur-la-terre.html" },
+      { id: "debutant-vecteur-raster",              titre: "Vecteur et raster",            page: "debutant-vecteur-raster.html" },
+      { id: "debutant-d-ou-viennent-les-donnees",   titre: "D'où viennent les données ?",  page: "debutant-d-ou-viennent-les-donnees.html" }
+    ];
+
+    const liste = document.getElementById("liste-modules");
+    const message = document.getElementById("etat-message");
+    const sectionQuiz = document.getElementById("quiz");
+
+    // 1. On affiche chaque module avec son état (validé ou à faire)
+    let manquants = 0;
+    MODULES.forEach(function (m) {
+      const li = document.createElement("li");
+      const lien = document.createElement("a");
+      lien.href = m.page;
+      lien.textContent = m.titre;
+      li.appendChild(lien);
+
+      const etat = document.createElement("span");
+      if (Progression.estValide(m.id)) {
+        etat.className = "coche";
+        etat.textContent = " ✓ validé";
+      } else {
+        etat.textContent = " : à valider";
+        manquants++;
+      }
+      li.appendChild(etat);
+      liste.appendChild(li);
+    });
+
+    // 2. Soit on ouvre le quiz, soit on explique ce qu'il reste à faire
+    if (manquants > 0) {
+      message.textContent = "Il vous reste " + manquants + (manquants > 1 ? " modules" : " module") +
+                            " à valider avant de passer le quiz final. Cliquez sur un module de la liste pour le reprendre.";
+    } else {
+      message.textContent = Progression.estValide("debutant-quiz-final")
+        ? "Les 5 modules sont validés et le quiz final est réussi : le niveau Intermédiaire est débloqué. Vous pouvez refaire le quiz pour vous entraîner."
+        : "Les 5 modules sont validés : vous pouvez passer le quiz final.";
+      sectionQuiz.hidden = false;
+    }
+  </script>
+
+  <!-- Les 8 questions du quiz final : 6 bonnes réponses pour réussir -->
+  <script>
+    if (!document.getElementById("quiz").hidden) {
+      creerQuiz(document.getElementById("quiz-conteneur"), {
+        id: "debutant-quiz-final",
+        nom: "Niveau Débutant",
+        seuil: 6,
+        messageReussite: "Bravo, niveau Débutant validé ! Le niveau Intermédiaire est maintenant débloqué.",
+        messageEchec: "Il faut au moins 6 bonnes réponses sur 8 pour valider le niveau. Revoyez les modules qui vous ont posé problème, puis réessayez.",
+        lienReussite: { texte: "Retour à l'accueil pour voir le niveau Intermédiaire", href: "../index.html#niveaux" },
+        questions: [
+          {
+            enonce: "Que réunit la géomatique ?",
+            choix: [
+              "Uniquement des outils pour dessiner des cartes sur papier",
+              "Des outils pour mesurer seulement la hauteur des montagnes",
+              "Des outils et méthodes pour collecter, traiter, analyser, représenter et diffuser des informations géographiques",
+              "Des outils pour prévoir la météo à court terme"
+            ],
+            bonne: 2,
+            explication: "La géomatique couvre toute la chaîne : de la collecte des données jusqu'à la diffusion des cartes."
+          },
+          {
+            enonce: "Une image satellite a des pixels de 30 m. Que peut-on en conclure ?",
+            choix: [
+              "Une maison isolée ne se distingue pas dans un seul pixel",
+              "Les images sont forcément vectorielles",
+              "L'image montre chaque brique d'un mur",
+              "L'image est forcément en 3D"
+            ],
+            bonne: 0,
+            explication: "Un pixel de 30 m couvre 900 m² : une petite maison se confond avec ce qui l'entoure. Plus le pixel est grand, moins on voit de détails."
+          },
+          {
+            enonce: "Sur une carte à l'échelle 1/100 000, que représente 1 cm ?",
+            choix: ["100 m sur le terrain", "500 m sur le terrain", "10 km sur le terrain", "1 km sur le terrain"],
+            bonne: 3,
+            explication: "1 cm sur la carte vaut 100 000 cm sur le terrain, soit 1 000 m, donc 1 km."
+          },
+          {
+            enonce: "Quelle échelle couvre le plus grand territoire, avec le moins de détails ?",
+            choix: ["1/5 000", "1/1 000 000", "1/50 000", "1/10 000"],
+            bonne: 1,
+            explication: "1/1 000 000 est la plus petite échelle de la liste : la réalité est très réduite, donc on voit un grand territoire mais peu de détails."
+          },
+          {
+            enonce: "Un point se trouve à 3° S et 40° E. Où est-il ?",
+            choix: [
+              "Au nord de l'équateur, à l'ouest de Greenwich",
+              "Au nord de l'équateur, à l'est de Greenwich",
+              "Au sud de l'équateur, à l'est de Greenwich",
+              "Au sud de l'équateur, à l'ouest de Greenwich"
+            ],
+            bonne: 2,
+            explication: "S signifie au sud de l'équateur, et E signifie à l'est du méridien de Greenwich."
+          },
+          {
+            enonce: "Pourquoi 1° de longitude est-il plus court près des pôles qu'à l'équateur ?",
+            choix: [
+              "Parce que les méridiens se rapprochent en allant vers les pôles",
+              "Parce que la Terre est plus plate aux pôles",
+              "Parce que le GPS y est moins précis",
+              "Parce que les degrés changent de taille selon le pays"
+            ],
+            bonne: 0,
+            explication: "Tous les méridiens se rejoignent aux pôles : l'écart entre deux méridiens diminue donc quand on s'en approche."
+          },
+          {
+            enonce: "Une couche contenant les limites des régions du Sénégal est le plus souvent une donnée…",
+            choix: ["Raster, faite de pixels", "Raster, faite de lignes", "Vecteur, faite de pixels", "Vecteur, faite de polygones"],
+            bonne: 3,
+            explication: "Les régions sont des surfaces fermées : on les décrit par des polygones, donc en vecteur. Un raster, lui, est toujours une grille de pixels."
+          },
+          {
+            enonce: "Pour faire l'inventaire de 40 écoles avec leur nom et leur état, quelle source est la plus adaptée ?",
+            choix: [
+              "Les images Landsat (30 m)",
+              "Un relevé de terrain avec un GPS",
+              "Une ancienne image satellite",
+              "Un modèle 3D réalisé par drone"
+            ],
+            bonne: 1,
+            explication: "Seul le terrain donne la position exacte et les informations qu'on ne voit pas sur une image, comme le nom ou l'état d'une école."
+          }
+        ]
+      });
+    }
+  </script>
+
+</body>
+</html>

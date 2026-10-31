@@ -1,0 +1,689 @@
+/* ==========================================================
+   Géo Nakama : feuille de style partagée
+   Toutes les pages du site (accueil, leçons) utiliseront ce fichier.
+   ========================================================== */
+
+/* ---------- 1. Variables : palette et polices ----------
+   On définit les couleurs UNE fois ici, puis on les réutilise
+   partout avec var(--nom). Changer une couleur = la changer ici. */
+:root {
+  --encre: #14313b;        /* texte principal, bleu-vert très sombre */
+  --papier: #f2f5f1;       /* fond de page, gris-vert très clair */
+  --vegetation: #2f7d4f;   /* vert « végétation » : accent principal */
+  --eau: #2a6f97;          /* bleu « eau » : accent secondaire */
+  --ocre: #e4a81c;         /* jaune ocre : focus clavier et repères */
+  --trait: #c9d3cc;        /* fines bordures */
+  --texte-doux: #4a6169;   /* texte secondaire (contraste suffisant sur --papier) */
+
+  --police-titre: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --police-texte: "Literata", Georgia, "Times New Roman", serif;
+}
+
+/* ---------- 2. Base ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+body {
+  margin: 0;
+  background: var(--papier);
+  color: var(--encre);
+  font-family: var(--police-texte);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+}
+
+h1, h2, h3 {
+  font-family: var(--police-titre);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.6em;
+}
+
+h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 700; }
+h2 { font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 650; }
+h3 { font-size: 1.25rem; font-weight: 650; }
+
+p { margin: 0 0 1em; max-width: 62ch; }
+
+a { color: var(--eau); }
+
+/* Le focus clavier doit toujours être visible (accessibilité) */
+a:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--ocre);
+  outline-offset: 3px;
+}
+
+/* ---------- 3. Mise en page générale ---------- */
+.conteneur {
+  width: min(100% - 2.5rem, 68rem);
+  margin-inline: auto;
+}
+
+/* ---------- 4. En-tête du site ---------- */
+.entete {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--trait);
+}
+
+.entete .conteneur {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.logo {
+  font-family: var(--police-titre);
+  font-weight: 700;
+  font-size: 1.2rem;
+  color: var(--encre);
+  text-decoration: none;
+}
+
+.navigation {
+  display: flex;
+  gap: 1.5rem;
+  font-family: var(--police-titre);
+}
+
+.navigation a {
+  color: var(--encre);
+  text-decoration: none;
+}
+
+.navigation a:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* ---------- 5. Bouton ---------- */
+.bouton {
+  display: inline-block;
+  padding: 0.85rem 1.5rem;
+  background: var(--encre);
+  color: var(--papier);
+  font-family: var(--police-titre);
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.bouton:hover {
+  background: var(--vegetation);
+}
+
+/* ---------- 6. Section d'accueil (hero) ---------- */
+.hero {
+  padding: clamp(2.5rem, 7vw, 5rem) 0;
+}
+
+.hero .conteneur {
+  display: grid;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+@media (min-width: 52rem) {
+  .hero .conteneur {
+    grid-template-columns: 1fr 1.1fr;
+  }
+}
+
+.hero-texte p {
+  color: var(--texte-doux);
+  font-size: 1.15rem;
+}
+
+/* Illustration : une même forme en raster (gauche) et en vecteur (droite) */
+.hero-carte svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.hero-carte figcaption {
+  margin-top: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--texte-doux);
+  max-width: 48ch;
+}
+
+/* ---------- 7. Les trois niveaux ---------- */
+.section-niveaux {
+  padding: clamp(2.5rem, 6vw, 4.5rem) 0;
+  border-top: 1px solid var(--trait);
+}
+
+.section-niveaux > .conteneur > p {
+  color: var(--texte-doux);
+  margin-bottom: 2rem;
+}
+
+.niveaux {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.niveau {
+  display: grid;
+  gap: 0.5rem 1.25rem;
+  padding: 1.25rem 1.5rem;
+  background: #fff;
+  border-left: 8px solid var(--vegetation);
+}
+
+.niveau h3 { margin: 0; }
+.niveau p  { margin: 0; color: var(--texte-doux); }
+
+.niveau-etat {
+  font-family: var(--police-titre);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Niveau verrouillé : bordure pointillée et teinte atténuée */
+.niveau.verrouille {
+  background: transparent;
+  border-left: 8px solid var(--trait);
+  border-top: 1px dashed var(--trait);
+  border-right: 1px dashed var(--trait);
+  border-bottom: 1px dashed var(--trait);
+}
+
+.niveau.verrouille h3,
+.niveau.verrouille .niveau-etat {
+  color: var(--texte-doux);
+}
+
+/* Les niveaux s'« empilent » comme des strates, un peu plus décalés à chaque fois */
+@media (min-width: 52rem) {
+  .niveau {
+    grid-template-columns: 1fr auto;
+    align-items: start;
+  }
+  .niveau:nth-child(2) { margin-left: 2.5rem; }
+  .niveau:nth-child(3) { margin-left: 5rem; }
+}
+
+/* ---------- 8. Pied de page ---------- */
+.pied {
+  padding: 2rem 0;
+  border-top: 1px solid var(--trait);
+  color: var(--texte-doux);
+  font-size: 0.95rem;
+}
+
+.pied p { margin: 0; max-width: none; }
+
+/* ==========================================================
+   PAGES DE LEÇON (ajouté à l'étape 5)
+   ========================================================== */
+
+/* ---------- 9. En-tête d'une leçon ---------- */
+.lecon {
+  padding: clamp(2rem, 5vw, 3.5rem) 0 clamp(2.5rem, 6vw, 4.5rem);
+}
+
+/* Le fil d'Ariane indique où l'on est : Accueil > Débutant > Module */
+.fil {
+  margin: 0 0 1.5rem;
+  font-family: var(--police-titre);
+  font-size: 0.95rem;
+  color: var(--texte-doux);
+}
+
+.fil a { color: var(--texte-doux); }
+
+.lecon-entete p {
+  color: var(--texte-doux);
+  font-size: 1.15rem;
+}
+
+/* Les objectifs : une zone mise en avant par un trait vert à gauche */
+.objectifs {
+  margin: 2rem 0;
+  padding: 1.25rem 1.5rem;
+  background: #fff;
+  border-left: 8px solid var(--vegetation);
+}
+
+.objectifs h2 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+.objectifs ul { margin: 0; padding-left: 1.25rem; }
+.objectifs li { margin-bottom: 0.35rem; }
+
+/* Sections de texte : colonne étroite pour une lecture confortable */
+.lecon-section {
+  margin-top: 2.5rem;
+  max-width: 44rem;
+}
+
+/* ---------- 10. Illustration interactive (curseur de zoom) ---------- */
+.demo {
+  margin: 2.5rem 0;
+  padding: 1.5rem;
+  background: #fff;
+  border: 1px solid var(--trait);
+}
+
+.demo-panneaux {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 44rem) {
+  .demo-panneaux { grid-template-columns: 1fr 1fr; }
+}
+
+.panneau figcaption {
+  margin-bottom: 0.4rem;
+  font-family: var(--police-titre);
+  font-weight: 650;
+}
+
+.panneau svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--trait);
+}
+
+.demo-controle {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  font-family: var(--police-titre);
+  font-weight: 600;
+}
+
+.demo-controle input[type="range"] {
+  flex: 1 1 14rem;
+  accent-color: var(--vegetation);
+}
+
+.demo-message {
+  margin: 1rem 0 0;
+  min-height: 3.4em;      /* évite que la page « saute » quand le texte change */
+  color: var(--texte-doux);
+}
+
+/* ---------- 11. Tableau comparatif ---------- */
+.tableau-defile {
+  overflow-x: auto;       /* sur téléphone, le tableau défile au lieu de déborder */
+  margin: 1.25rem 0;
+}
+
+.comparatif {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 1rem;
+}
+
+.comparatif caption {
+  text-align: left;
+  padding-bottom: 0.5rem;
+  font-family: var(--police-titre);
+  font-weight: 650;
+}
+
+.comparatif th,
+.comparatif td {
+  padding: 0.7rem 1rem;
+  text-align: left;
+  border: 1px solid var(--trait);
+  vertical-align: top;
+}
+
+.comparatif thead th {
+  background: var(--encre);
+  color: var(--papier);
+  font-family: var(--police-titre);
+}
+
+.comparatif tbody th {
+  font-family: var(--police-titre);
+  background: var(--papier);
+}
+
+/* ---------- 12. À retenir ---------- */
+.retenir {
+  margin-top: 2.5rem;
+  max-width: 44rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--encre);
+  color: var(--papier);
+}
+
+.retenir h2 { font-size: 1.25rem; }
+.retenir ul { margin: 0; padding-left: 1.25rem; }
+.retenir li { margin-bottom: 0.4rem; }
+
+/* ==========================================================
+   QUIZ (ajouté à l'étape 6)
+   ========================================================== */
+
+/* L'attribut hidden doit toujours cacher l'élément, même si un style lui donne un affichage */
+[hidden] { display: none !important; }
+
+.quiz { max-width: 44rem; }
+
+.quiz-info {
+  padding: 0.75rem 1rem;
+  background: #fff;
+  border-left: 8px solid var(--eau);
+}
+
+.quiz-question {
+  margin: 0 0 1.5rem;
+  padding: 0;
+  border: 0;
+}
+
+.quiz-question legend {
+  padding: 0;
+  margin-bottom: 0.75rem;
+  font-family: var(--police-titre);
+  font-weight: 650;
+  font-size: 1.15rem;
+}
+
+.quiz-choix {
+  display: grid;
+  gap: 0.5rem;
+}
+
+/* Un choix de réponse = un bouton pleine largeur */
+.choix {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font: inherit;
+  color: var(--encre);
+  background: #fff;
+  border: 2px solid var(--trait);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.choix:hover:not(:disabled) {
+  border-color: var(--encre);
+}
+
+.choix:disabled {
+  cursor: default;
+  color: var(--encre);
+}
+
+/* Après la réponse : vert si juste, rouge brique si faux (le texte de l'explication le dit aussi) */
+.choix.juste {
+  background: #e6f2ea;
+  border-color: var(--vegetation);
+}
+
+.choix.juste::after {
+  content: "  ✓";
+  font-weight: 700;
+  color: var(--vegetation);
+}
+
+.choix.faux {
+  background: #f8e6e2;
+  border-color: #b3412e;
+}
+
+.choix.faux::after {
+  content: "  ✗";
+  font-weight: 700;
+  color: #b3412e;
+}
+
+.quiz-explication {
+  margin: 0.75rem 0 0;
+  color: var(--texte-doux);
+}
+
+.quiz-resultat {
+  padding: 1.25rem 1.5rem;
+  background: #fff;
+  border-left: 8px solid #b3412e;
+}
+
+.quiz-resultat.reussi {
+  border-left-color: var(--vegetation);
+}
+
+.quiz-resultat h3 { margin-bottom: 0.4rem; }
+.quiz-resultat .bouton { border: 0; font-size: 1rem; cursor: pointer; }
+
+/* ==========================================================
+   MODULE 1 : onglets et panneaux d'outils (ajouté à l'étape 7)
+   ========================================================== */
+
+.onglets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.onglet {
+  padding: 0.6rem 1.1rem;
+  font-family: var(--police-titre);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--encre);
+  background: #fff;
+  border: 2px solid var(--trait);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.onglet:hover { border-color: var(--encre); }
+
+/* L'onglet actif est plein : on ne se fie pas qu'à la couleur, la forme change aussi */
+.onglet[aria-pressed="true"] {
+  background: var(--encre);
+  color: var(--papier);
+  border-color: var(--encre);
+}
+
+.domaine {
+  display: grid;
+  gap: 1.25rem;
+  align-items: center;
+  padding: 1.25rem;
+  background: #fff;
+  border: 1px solid var(--trait);
+}
+
+@media (min-width: 44rem) {
+  .domaine { grid-template-columns: 1fr 1.2fr; }
+}
+
+.domaine svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--papier);
+  border: 1px solid var(--trait);
+}
+
+.domaine dl { margin: 0; }
+
+.domaine dt {
+  margin-top: 0.9rem;
+  font-family: var(--police-titre);
+  font-weight: 650;
+}
+
+.domaine dt:first-child { margin-top: 0; }
+
+.domaine dd {
+  margin: 0.15rem 0 0;
+  color: var(--texte-doux);
+}
+
+/* ---------- Liste des modules dans les niveaux de la page d'accueil ---------- */
+.modules {
+  list-style: decimal;
+  margin: 0.75rem 0 0;
+  padding-left: 1.5rem;
+  font-family: var(--police-titre);
+  font-size: 0.95rem;
+}
+
+.modules li { margin: 0.25rem 0; }
+.modules .bientot { color: var(--texte-doux); }
+
+/* ==========================================================
+   MODULE 2 : carte annotée, échelle, encadré « piège » (étape 8)
+   ========================================================== */
+
+/* Un schéma illustré, centré et de taille raisonnable */
+.schema {
+  max-width: 36rem;
+  margin: 1.25rem 0;
+}
+
+.schema svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #fff;
+  border: 1px solid var(--trait);
+}
+
+/* Liste numérotée qui accompagne la carte annotée */
+.liste-elements {
+  max-width: 44rem;
+  padding-left: 1.5rem;
+}
+
+.liste-elements li { margin-bottom: 0.5rem; }
+
+/* Encadré d'avertissement : trait ocre à gauche */
+.piege {
+  max-width: 44rem;
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  background: #fff;
+  border-left: 8px solid var(--ocre);
+}
+
+/* ==========================================================
+   PROGRESSION ET QUIZ FINAL (ajouté à l'étape 9)
+   ========================================================== */
+
+/* Coche « validé » : le texte est toujours présent, la couleur ne fait que l'appuyer */
+.coche {
+  margin-left: 0.4rem;
+  color: var(--vegetation);
+  font-family: var(--police-titre);
+  font-weight: 600;
+}
+
+/* Compteur de progression d'un niveau (la règle .niveau p est plus faible : on la dépasse) */
+.niveau .niveau-progres {
+  margin: 0.6rem 0 0;
+  font-family: var(--police-titre);
+  font-weight: 600;
+  color: var(--encre);
+}
+
+.niveau .niveau-progres:empty { display: none; }
+
+.quiz-final-lien {
+  margin: 0.75rem 0 0;
+  font-family: var(--police-titre);
+  font-size: 0.95rem;
+}
+
+/* ==========================================================
+   NAVIGATION ENTRE LES MODULES (ajouté à l'étape 10)
+   ========================================================== */
+
+.nav-modules {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 3.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--trait);
+}
+
+.nav-modules a {
+  display: block;
+  padding: 0.85rem 1.25rem;
+  min-width: 14rem;
+  font-family: var(--police-titre);
+  font-weight: 650;
+  color: var(--encre);
+  text-decoration: none;
+  background: #fff;
+  border: 2px solid var(--encre);
+  border-radius: 4px;
+}
+
+.nav-modules a:hover {
+  background: var(--encre);
+  color: var(--papier);
+}
+
+.nav-modules .nav-suivant {
+  margin-left: auto;
+  text-align: right;
+}
+
+.nav-etiquette {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+/* Sur téléphone, les deux boutons s'empilent sur toute la largeur */
+@media (max-width: 36rem) {
+  .nav-modules a,
+  .nav-modules .nav-suivant {
+    width: 100%;
+    min-width: 0;
+    margin-left: 0;
+    text-align: left;
+  }
+}
+
+/* ---------- Tableaux sur téléphone ---------- */
+.indice-defilement { display: none; }
+
+@media (max-width: 44rem) {
+  .indice-defilement {
+    display: block;
+    margin: 0.5rem 0 0;
+    font-size: 0.9rem;
+    color: var(--texte-doux);
+  }
+
+  .comparatif th,
+  .comparatif td {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.92rem;
+  }
+}

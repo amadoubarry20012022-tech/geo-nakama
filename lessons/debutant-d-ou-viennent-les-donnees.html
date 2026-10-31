@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>D'où viennent les données ? : Géo Nakama</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Literata:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="entete">
+    <div class="conteneur">
+      <a class="logo" href="../index.html">Géo Nakama</a>
+      <nav class="navigation" aria-label="Navigation principale">
+        <a href="../index.html#niveaux">Les niveaux</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="lecon">
+    <div class="conteneur">
+
+      <p class="fil"><a href="../index.html">Accueil</a> / Débutant / D'où viennent les données ?</p>
+
+      <div class="lecon-entete">
+        <h1>D'où viennent les données ?</h1>
+        <p>Une carte n'existe pas sans données, et chaque donnée a été produite quelque part, par quelqu'un, avec une certaine précision.</p>
+      </div>
+
+      <section class="objectifs" aria-labelledby="objectifs-titre">
+        <h2 id="objectifs-titre">Objectifs de cette leçon</h2>
+        <ul>
+          <li>Citer les quatre grandes sources de données géographiques.</li>
+          <li>Comparer leur précision, leur couverture, leur coût et leur rapidité.</li>
+          <li>Choisir la source adaptée à un besoin précis.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 1. Les quatre sources ===== -->
+      <section class="lecon-section" aria-labelledby="sources-titre">
+        <h2 id="sources-titre">Quatre grandes sources</h2>
+
+        <h3>Le relevé de terrain</h3>
+        <p>Une personne se déplace avec un récepteur <strong>GPS</strong> et note la position des objets, ainsi que leurs caractéristiques (nom, état, type). La précision va de quelques mètres avec un téléphone à quelques centimètres avec un récepteur de précision. C'est la seule source qui donne des informations qu'on ne voit pas sur une image, mais elle est lente.</p>
+
+        <h3>Les images satellites</h3>
+        <p>Des satellites photographient la Terre en continu. Les images de <strong>Sentinel-2</strong> (pixels de 10 m, une nouvelle image tous les 5 jours environ) et de <strong>Landsat</strong> (pixels de 30 m) sont gratuites. Elles couvrent de très grandes surfaces et permettent de suivre un territoire dans le temps, mais les nuages gênent parfois et les détails fins restent invisibles.</p>
+
+        <h3>Le drone</h3>
+        <p>Un drone équipé d'un appareil photo survole une zone précise. Ses images ont des pixels de quelques centimètres, et la photogrammétrie permet d'en tirer un modèle 3D. Il convient à un site de taille limitée, et demande du matériel, un pilote et souvent une autorisation de vol.</p>
+
+        <h3>Les données ouvertes et existantes</h3>
+        <p>Beaucoup de données sont déjà produites et partagées : cartes collaboratives comme <strong>OpenStreetMap</strong>, portails de données, bases d'organismes publics. On les obtient vite et gratuitement, mais leur qualité, leur date et leur couverture varient : il faut toujours les vérifier.</p>
+      </section>
+
+      <!-- ===== 2. Jeu de mission ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="jeu-titre">
+        <h2 id="jeu-titre">À vous de jouer : choisissez la bonne source</h2>
+        <p>Choisissez une mission, puis cliquez sur chaque source pour voir ce qu'elle apporte et ses limites. Trouvez celle qui convient le mieux.</p>
+
+        <div class="demo">
+          <div class="onglets" role="group" aria-label="Choisir une mission" id="missions"></div>
+
+          <p id="enonce-mission" style="font-family:var(--police-titre);font-weight:600;font-size:1.15rem;margin-bottom:1rem"></p>
+
+          <div class="quiz-choix" id="sources" role="group" aria-label="Sources de données"></div>
+
+          <p class="demo-message" id="retour-mission" aria-live="polite" style="min-height:6em"></p>
+        </div>
+      </section>
+
+      <!-- ===== 3. Tableau comparatif ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="comparatif-titre">
+        <h2 id="comparatif-titre">Comparer les sources</h2>
+        <p class="indice-defilement">Faites défiler le tableau vers la droite pour voir toutes les colonnes.</p>
+        <div class="tableau-defile" tabindex="0" role="region" aria-label="Tableau comparatif des sources, défilant horizontalement">
+          <table class="comparatif">
+            <caption>Les quatre sources en un coup d'œil</caption>
+            <thead>
+              <tr>
+                <th scope="col">Source</th>
+                <th scope="col">Précision</th>
+                <th scope="col">Surface couverte</th>
+                <th scope="col">Coût</th>
+                <th scope="col">Rapidité</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Relevé de terrain (GPS)</th>
+                <td>De quelques mètres à quelques centimètres</td>
+                <td>Petite : point par point</td>
+                <td>Moyen à élevé (déplacements, temps)</td>
+                <td>Lent</td>
+              </tr>
+              <tr>
+                <th scope="row">Images satellites</th>
+                <td>Pixels de 10 à 30 m (Sentinel-2, Landsat)</td>
+                <td>Très grande : régions, pays</td>
+                <td>Faible : images gratuites</td>
+                <td>Nouvelle image tous les 5 jours environ (Sentinel-2)</td>
+              </tr>
+              <tr>
+                <th scope="row">Drone</th>
+                <td>Pixels de quelques centimètres</td>
+                <td>Petite à moyenne : un site</td>
+                <td>Moyen (matériel, pilote, autorisation)</td>
+                <td>À la demande, selon la météo</td>
+              </tr>
+              <tr>
+                <th scope="row">Données ouvertes</th>
+                <td>Variable</td>
+                <td>Variable</td>
+                <td>Gratuit</td>
+                <td>Immédiat</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===== 4. Trois questions ===== -->
+      <section class="lecon-section" aria-labelledby="questions-titre">
+        <h2 id="questions-titre">Trois questions à poser à toute donnée</h2>
+        <p>Avant d'utiliser une donnée, quelle que soit sa source, demandez-vous :</p>
+        <ol class="liste-elements">
+          <li><strong>Qui l'a produite ?</strong> Une institution, un projet collaboratif, vous-même ?</li>
+          <li><strong>Quand ?</strong> Un territoire change : une donnée de 2010 peut ne plus correspondre à la réalité.</li>
+          <li><strong>Avec quelle précision ?</strong> Un pixel de 30 m ne montre pas une maison.</li>
+        </ol>
+        <p>Ce sont les mêmes informations que la <em>source</em> d'une carte, que vous avez vue dans le module « Lire une carte ».</p>
+      </section>
+
+      <!-- ===== 5. À retenir ===== -->
+      <section class="retenir" aria-labelledby="retenir-titre">
+        <h2 id="retenir-titre">À retenir</h2>
+        <ul>
+          <li>Les données viennent du terrain, des satellites, des drones ou de sources ouvertes déjà publiées.</li>
+          <li>Le bon choix dépend du besoin : taille de la zone, précision voulue, budget et délai.</li>
+          <li>Il faut toujours vérifier qui a produit une donnée, quand, et avec quelle précision.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 6. Quiz ===== -->
+      <section class="lecon-section" id="quiz" aria-labelledby="quiz-titre">
+        <h2 id="quiz-titre">Quiz du module</h2>
+        <p>Quatre questions pour vérifier que c'est bien clair. Il faut au moins 3 bonnes réponses pour valider le module.</p>
+        <div id="quiz-conteneur" class="quiz"></div>
+      </section>
+
+      <nav class="nav-modules" aria-label="Navigation entre les modules">
+        <a class="nav-precedent" href="debutant-vecteur-raster.html" rel="prev"><span class="nav-etiquette">Module précédent</span>Vecteur et raster</a>
+        <a class="nav-suivant" href="debutant-quiz-final.html" rel="next"><span class="nav-etiquette">Quiz final</span>Quiz final du niveau Débutant</a>
+      </nav>
+
+    </div>
+  </main>
+
+  <footer class="pied">
+    <div class="conteneur">
+      <p>Géo Nakama : un projet pour apprendre la géomatique par l'image.</p>
+    </div>
+  </footer>
+
+  <script src="../js/progress.js"></script>
+  <script src="../js/quiz.js"></script>
+
+  <!-- Les questions de CE module -->
+  <script>
+    creerQuiz(document.getElementById("quiz-conteneur"), {
+      id: "debutant-d-ou-viennent-les-donnees",
+      seuil: 3,
+      questions: [
+        {
+          enonce: "Quelle source convient le mieux pour suivre la végétation d'un pays entier, chaque mois ?",
+          choix: ["Un relevé GPS sur le terrain", "Les images satellites", "Un drone", "Une carte papier"],
+          bonne: 1,
+          explication: "Les satellites couvrent de très grandes surfaces, repassent régulièrement et fournissent des images gratuites. Un relevé de terrain ou un drone couvrirait beaucoup trop peu."
+        },
+        {
+          enonce: "Quelle est la taille approximative des pixels d'une image Sentinel-2 ?",
+          choix: ["10 mètres", "10 centimètres", "10 kilomètres", "1 millimètre"],
+          bonne: 0,
+          explication: "Sentinel-2 offre des pixels de 10 m pour ses bandes les plus fines. C'est assez pour suivre des champs ou des quartiers, mais pas pour voir une maison."
+        },
+        {
+          enonce: "Pour modéliser en 3D un petit quartier, avec une précision de quelques centimètres, quelle source choisir ?",
+          choix: ["Les images Landsat (30 m)", "OpenStreetMap", "Un relevé GPS, point par point", "Un drone"],
+          bonne: 3,
+          explication: "Un drone prend des photos qui se recouvrent : la photogrammétrie en tire un modèle 3D précis. Landsat est trop grossier, et un relevé point par point serait interminable."
+        },
+        {
+          enonce: "Que faut-il toujours vérifier avant d'utiliser une donnée trouvée en ligne ?",
+          choix: [
+            "Sa taille en mégaoctets",
+            "Le nom du fichier",
+            "Qui l'a produite, quand et avec quelle précision",
+            "Le nombre de fois qu'elle a été téléchargée"
+          ],
+          bonne: 2,
+          explication: "L'auteur, la date et la précision déterminent si la donnée est fiable pour votre usage. Une donnée ancienne ou trop grossière peut conduire à de mauvaises conclusions."
+        }
+      ]
+    });
+  </script>
+
+  <!-- Script du jeu de mission : chaque mission a une bonne source, et un commentaire pour chaque source -->
+  <script>
+    const SOURCES = {
+      terrain:   "Relevé de terrain (GPS)",
+      satellite: "Images satellites",
+      drone:     "Drone",
+      ouvertes:  "Données ouvertes (comme OpenStreetMap)"
+    };
+
+    const MISSIONS = [
+      {
+        titre: "Végétation d'une région",
+        enonce: "Vous devez suivre l'état de la végétation sur toute une région, chaque mois pendant un an.",
+        bonne: "satellite",
+        retours: {
+          terrain:   "Il faudrait parcourir toute la région chaque mois : beaucoup trop long et trop coûteux. Le terrain sert plutôt à vérifier quelques points.",
+          satellite: "Sentinel-2 repasse sur la même zone tous les 5 jours environ, avec des images gratuites. C'est idéal pour suivre la végétation sur une grande surface dans le temps.",
+          drone:     "Un drone couvre un site limité par vol : très insuffisant pour une région entière, et le répéter chaque mois coûterait cher.",
+          ouvertes:  "Il existe des produits déjà calculés à faible résolution, mais pour une région précise et un suivi mensuel, on part plutôt des images satellites."
+        }
+      },
+      {
+        titre: "Quartier en 3D",
+        enonce: "Vous devez modéliser en 3D un quartier de quelques hectares, avec les toits et les rues.",
+        bonne: "drone",
+        retours: {
+          terrain:   "Mesurer chaque toit et chaque rue au sol prendrait des semaines, sans donner une vraie vue 3D continue.",
+          satellite: "Des pixels de 10 m sont trop grossiers : une maison tient dans un seul pixel. Des images à très haute résolution existent, mais elles sont payantes.",
+          drone:     "Le drone prend des centaines de photos qui se recouvrent, et la photogrammétrie en tire un modèle 3D précis à quelques centimètres. C'est l'outil idéal pour un petit secteur.",
+          ouvertes:  "Les données ouvertes donnent parfois l'emprise des bâtiments, mais rarement un modèle 3D complet et à jour."
+        }
+      },
+      {
+        titre: "Inventaire d'écoles",
+        enonce: "Vous devez relever la position exacte de 40 écoles d'un département, avec leur nom et leur état.",
+        bonne: "terrain",
+        retours: {
+          terrain:   "Avec un GPS, vous relevez la position de chaque école et notez sur place son nom et son état. Aucune image ne donne ces informations. Pensez quand même à vérifier d'abord si une liste existe déjà.",
+          satellite: "On peut parfois repérer un grand bâtiment sur une image, mais pas savoir que c'est une école, ni connaître son nom ou son état.",
+          drone:     "Le drone montre les toits en détail, mais ne dit pas quel bâtiment est une école. Et 40 sites dispersés, cela ferait beaucoup de vols.",
+          ouvertes:  "C'est une bonne première étape : une liste existe peut-être déjà. Mais elle peut être incomplète ou dépassée, il faut la vérifier et la compléter sur le terrain."
+        }
+      },
+      {
+        titre: "Réseau routier",
+        enonce: "Vous avez besoin rapidement du tracé des routes d'une zone, pour une première carte de travail.",
+        bonne: "ouvertes",
+        retours: {
+          terrain:   "Parcourir toutes les routes avec un GPS est long. Pour une première carte de travail, ce serait disproportionné.",
+          satellite: "On peut tracer les routes à partir des images, mais il faut les numériser une à une, ce qui prend du temps.",
+          drone:     "Un drone couvre trop peu de surface pour des routes réparties sur toute une zone.",
+          ouvertes:  "Des cartes collaboratives comme OpenStreetMap contiennent déjà le tracé de beaucoup de routes, téléchargeable gratuitement et tout de suite. Il faut vérifier leur qualité, mais c'est le plus rapide."
+        }
+      }
+    ];
+
+    const zoneMissions = document.getElementById("missions");
+    const zoneSources = document.getElementById("sources");
+    const texteEnonce = document.getElementById("enonce-mission");
+    const texteRetour = document.getElementById("retour-mission");
+
+    const boutonsMissions = [];
+    const boutonsSources = {};
+    let missionActuelle = 0;
+
+    // Les boutons de mission
+    MISSIONS.forEach(function (mission, index) {
+      const bouton = document.createElement("button");
+      bouton.type = "button";
+      bouton.className = "onglet";
+      bouton.textContent = mission.titre;
+      bouton.addEventListener("click", function () { choisirMission(index); });
+      boutonsMissions.push(bouton);
+      zoneMissions.appendChild(bouton);
+    });
+
+    // Les boutons de source (les mêmes pour toutes les missions)
+    Object.keys(SOURCES).forEach(function (cle) {
+      const bouton = document.createElement("button");
+      bouton.type = "button";
+      bouton.className = "choix";
+      bouton.textContent = SOURCES[cle];
+      bouton.addEventListener("click", function () { essayerSource(cle); });
+      boutonsSources[cle] = bouton;
+      zoneSources.appendChild(bouton);
+    });
+
+    function choisirMission(index) {
+      missionActuelle = index;
+      boutonsMissions.forEach(function (b, i) {
+        b.setAttribute("aria-pressed", i === index ? "true" : "false");
+      });
+      texteEnonce.textContent = MISSIONS[index].enonce;
+      texteRetour.textContent = "Quelle source choisiriez-vous ? Cliquez pour voir ce qu'elle apporte.";
+      Object.keys(boutonsSources).forEach(function (cle) {
+        boutonsSources[cle].classList.remove("juste", "faux");
+      });
+    }
+
+    function essayerSource(cle) {
+      const mission = MISSIONS[missionActuelle];
+      const bouton = boutonsSources[cle];
+      bouton.classList.remove("juste", "faux");
+
+      if (cle === mission.bonne) {
+        bouton.classList.add("juste");
+        texteRetour.textContent = "Bon choix. " + mission.retours[cle];
+      } else {
+        bouton.classList.add("faux");
+        texteRetour.textContent = "Pas le plus adapté. " + mission.retours[cle];
+      }
+    }
+
+    choisirMission(0);
+  </script>
+
+</body>
+</html>

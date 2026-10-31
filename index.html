@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Géo Nakama : apprendre la géomatique avec des illustrations</title>
+  <meta name="description" content="SIG, télédétection, photogrammétrie : des leçons illustrées, des quiz et trois niveaux à débloquer à votre rythme.">
+
+  <!-- Polices (nécessitent internet ; si elles ne chargent pas, les polices de secours du CSS prennent le relais) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Literata:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="entete">
+    <div class="conteneur">
+      <a class="logo" href="index.html">Géo Nakama</a>
+      <nav class="navigation" aria-label="Navigation principale">
+        <a href="#niveaux">Les niveaux</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ===== Section d'accueil ===== -->
+    <section class="hero">
+      <div class="conteneur">
+
+        <div class="hero-texte">
+          <h1>La géomatique, enfin visible.</h1>
+          <p>SIG, télédétection, photogrammétrie : chaque notion est expliquée avec des illustrations, puis vérifiée par un quiz. Vous progressez niveau par niveau, à votre rythme.</p>
+          <a class="bouton" href="lessons/debutant-quest-ce-que-la-geomatique.html">Commencer par le niveau Débutant</a>
+        </div>
+
+        <!-- Illustration : la même forme, en raster à gauche et en vecteur à droite -->
+        <figure class="hero-carte">
+          <svg viewBox="0 0 480 320" role="img" aria-labelledby="carte-titre carte-desc">
+            <title id="carte-titre">Une même forme en raster et en vecteur</title>
+            <desc id="carte-desc">À gauche, la forme est découpée en carrés (pixels). À droite, elle est tracée par une ligne continue.</desc>
+
+            <defs>
+              <!-- Le clipPath « découpe » le dessin vectoriel pour ne garder que la moitié droite -->
+              <clipPath id="moitie-droite"><rect x="240" y="0" width="240" height="320"/></clipPath>
+            </defs>
+
+            <!-- Moitié gauche : les cellules du raster sont ajoutées par le script plus bas -->
+            <g id="raster" aria-hidden="true"></g>
+
+            <!-- Moitié droite : la forme vectorielle (les points sont ajoutés par le script) -->
+            <polygon id="vecteur" clip-path="url(#moitie-droite)"
+                     fill="#2f7d4f" stroke="#14313b" stroke-width="2.5" stroke-linejoin="round"/>
+
+            <!-- Ligne de séparation -->
+            <line x1="240" y1="0" x2="240" y2="296" stroke="#14313b" stroke-width="1.5" stroke-dasharray="5 5"/>
+
+            <text x="120" y="314" text-anchor="middle" font-family="Bricolage Grotesque, system-ui, sans-serif" font-size="15" fill="#14313b">Raster : une grille de pixels</text>
+            <text x="360" y="314" text-anchor="middle" font-family="Bricolage Grotesque, system-ui, sans-serif" font-size="15" fill="#14313b">Vecteur : une ligne continue</text>
+          </svg>
+          <figcaption>Même forme, deux façons de la représenter. Vous la retrouverez dans le module « Vecteur et raster ».</figcaption>
+        </figure>
+
+      </div>
+    </section>
+
+    <!-- ===== Les trois niveaux ===== -->
+    <section class="section-niveaux" id="niveaux">
+      <div class="conteneur">
+        <h2>Trois niveaux, à débloquer un par un</h2>
+        <p>Pour passer au niveau suivant, il faut réussir le quiz du niveau en cours.</p>
+
+        <ol class="niveaux">
+          <li class="niveau" id="niveau-debutant">
+            <div>
+              <h3>Débutant</h3>
+              <p>5 modules : la carte, les coordonnées, les données vecteur et raster.</p>
+              <p class="niveau-progres" id="progres-debutant" aria-live="polite"></p>
+              <ol class="modules">
+                <li data-module="debutant-quest-ce-que-la-geomatique"><a href="lessons/debutant-quest-ce-que-la-geomatique.html">C'est quoi la géomatique ?</a></li>
+                <li data-module="debutant-lire-une-carte"><a href="lessons/debutant-lire-une-carte.html">Lire une carte</a></li>
+                <li data-module="debutant-se-reperer-sur-la-terre"><a href="lessons/debutant-se-reperer-sur-la-terre.html">Se repérer sur la Terre</a></li>
+                <li data-module="debutant-vecteur-raster"><a href="lessons/debutant-vecteur-raster.html">Vecteur et raster</a></li>
+                <li data-module="debutant-d-ou-viennent-les-donnees"><a href="lessons/debutant-d-ou-viennent-les-donnees.html">D'où viennent les données ?</a></li>
+              </ol>
+              <p class="quiz-final-lien"><a href="lessons/debutant-quiz-final.html">Quiz final du niveau Débutant</a> <span id="etat-quiz-final"></span></p>
+            </div>
+            <span class="niveau-etat" id="etat-debutant">Ouvert</span>
+          </li>
+
+          <li class="niveau verrouille" id="niveau-intermediaire">
+            <div>
+              <h3>Intermédiaire</h3>
+              <p>6 modules : projections, analyse spatiale, images satellites, indices comme le NDVI.</p>
+              <p class="niveau-progres" id="note-intermediaire"></p>
+            </div>
+            <span class="niveau-etat" id="etat-intermediaire">Se débloque après le quiz Débutant</span>
+          </li>
+
+          <li class="niveau verrouille">
+            <div>
+              <h3>Avancé</h3>
+              <p>6 modules : photogrammétrie, classification, analyse multi-temporelle, automatisation.</p>
+            </div>
+            <span class="niveau-etat">Se débloque après le quiz Intermédiaire</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="pied">
+    <div class="conteneur">
+      <p>Géo Nakama : un projet pour apprendre la géomatique par l'image.</p>
+    </div>
+  </footer>
+
+  <!-- ===== Script de l'illustration =====
+       Il prend UNE forme (une liste de points) et :
+       - la dessine telle quelle côté vecteur ;
+       - la « pixellise » côté raster : pour chaque carré de la grille, on regarde
+         si son centre est à l'intérieur de la forme. Si oui, le carré est coloré. -->
+  <script>
+    // La forme : une liste de points [x, y] dans l'espace du dessin (480 x 320)
+    const FORME = [
+      [40,200],[60,140],[110,100],[150,60],[210,50],[260,80],[300,60],
+      [360,70],[420,110],[440,170],[410,230],[360,260],[320,250],
+      [290,290],[230,280],[180,250],[120,260],[70,250]
+    ];
+
+    const TAILLE_CELLULE = 24;
+
+    // Test mathématique : le point (x, y) est-il à l'intérieur du polygone ?
+    function estDansLaForme(x, y, polygone) {
+      let dedans = false;
+      for (let i = 0, j = polygone.length - 1; i < polygone.length; j = i++) {
+        const [xi, yi] = polygone[i];
+        const [xj, yj] = polygone[j];
+        const traverse = (yi > y) !== (yj > y) &&
+                         x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+        if (traverse) dedans = !dedans;
+      }
+      return dedans;
+    }
+
+    // Côté vecteur : on donne simplement les points au polygone
+    document.getElementById("vecteur").setAttribute(
+      "points", FORME.map(p => p.join(",")).join(" ")
+    );
+
+    // Côté raster : on parcourt la grille de la moitié gauche (x de 0 à 240)
+    const groupeRaster = document.getElementById("raster");
+    const SVG_NS = "http://www.w3.org/2000/svg";
+
+    for (let colonne = 0; colonne < 10; colonne++) {
+      for (let ligne = 0; ligne < 11; ligne++) {
+        const x = colonne * TAILLE_CELLULE;
+        const y = ligne * TAILLE_CELLULE;
+        const centreX = x + TAILLE_CELLULE / 2;
+        const centreY = y + TAILLE_CELLULE / 2;
+
+        const cellule = document.createElementNS(SVG_NS, "rect");
+        cellule.setAttribute("x", x);
+        cellule.setAttribute("y", y);
+        cellule.setAttribute("width", TAILLE_CELLULE);
+        cellule.setAttribute("height", TAILLE_CELLULE);
+
+        if (estDansLaForme(centreX, centreY, FORME)) {
+          cellule.setAttribute("fill", "#2f7d4f");   // cellule « terre »
+          cellule.setAttribute("stroke", "#f2f5f1");
+        } else {
+          cellule.setAttribute("fill", "none");      // cellule « eau » : juste la grille
+          cellule.setAttribute("stroke", "#d5ddd8");
+        }
+        cellule.setAttribute("stroke-width", "1");
+        groupeRaster.appendChild(cellule);
+      }
+    }
+  </script>
+
+
+  <!-- ===== Progression de l'apprenant =====
+       On lit ce que progress.js a sauvegardé dans le navigateur, puis on met la page à jour. -->
+  <script src="js/progress.js"></script>
+  <script>
+    (function () {
+      const ID_QUIZ_FINAL = "debutant-quiz-final";
+
+      // 1. Une coche sur chaque module validé, et on les compte
+      let valides = 0;
+      const modules = document.querySelectorAll("#niveau-debutant [data-module]");
+      modules.forEach(function (li) {
+        if (Progression.estValide(li.dataset.module)) {
+          valides++;
+          const coche = document.createElement("span");
+          coche.className = "coche";
+          coche.textContent = " ✓ validé";
+          li.appendChild(coche);
+        }
+      });
+
+      const total = modules.length;
+      const progres = document.getElementById("progres-debutant");
+      const quizFinalReussi = Progression.estValide(ID_QUIZ_FINAL);
+
+      // 2. Le compteur du niveau Débutant
+      if (valides === 0) {
+        progres.textContent = "";
+      } else if (valides < total) {
+        progres.textContent = valides + (valides > 1 ? " modules" : " module") + " sur " + total + " validé" + (valides > 1 ? "s" : "") + ".";
+      } else if (!quizFinalReussi) {
+        progres.textContent = "Les " + total + " modules sont validés : place au quiz final !";
+      } else {
+        progres.textContent = "Les " + total + " modules et le quiz final sont validés.";
+      }
+
+      // 3. L'état du quiz final
+      const etatQuiz = document.getElementById("etat-quiz-final");
+      if (quizFinalReussi) {
+        etatQuiz.className = "coche";
+        etatQuiz.textContent = "✓ réussi";
+      } else if (valides < total) {
+        etatQuiz.textContent = "(s'ouvre après les " + total + " modules)";
+      }
+
+      // 4. Le niveau Débutant passe à « Validé », et l'Intermédiaire se débloque
+      if (quizFinalReussi) {
+        document.getElementById("etat-debutant").textContent = "Validé";
+
+        const inter = document.getElementById("niveau-intermediaire");
+        inter.classList.remove("verrouille");
+        document.getElementById("etat-intermediaire").textContent = "Débloqué";
+        document.getElementById("note-intermediaire").textContent = "Les modules de ce niveau arrivent bientôt.";
+      }
+    })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vecteur et raster : Géo Nakama</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Literata:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <!-- Attention : cette page est dans le dossier lessons/, donc on remonte d'un niveau avec ../ -->
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="entete">
+    <div class="conteneur">
+      <a class="logo" href="../index.html">Géo Nakama</a>
+      <nav class="navigation" aria-label="Navigation principale">
+        <a href="../index.html#niveaux">Les niveaux</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="lecon">
+    <div class="conteneur">
+
+      <p class="fil"><a href="../index.html">Accueil</a> / Débutant / Vecteur et raster</p>
+
+      <div class="lecon-entete">
+        <h1>Vecteur et raster</h1>
+        <p>Toute donnée spatiale est stockée sous l'une de ces deux formes. Les confondre est l'erreur la plus fréquente des débutants.</p>
+      </div>
+
+      <section class="objectifs" aria-labelledby="objectifs-titre">
+        <h2 id="objectifs-titre">Objectifs de cette leçon</h2>
+        <ul>
+          <li>Expliquer la différence entre une donnée vecteur et une donnée raster.</li>
+          <li>Reconnaître un point, une ligne et un polygone.</li>
+          <li>Comprendre ce que veut dire « résolution » pour un raster.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 1. Le vecteur ===== -->
+      <section class="lecon-section" aria-labelledby="vecteur-titre">
+        <h2 id="vecteur-titre">Le vecteur : des formes décrites par des points</h2>
+        <p>Une donnée vecteur dessine le monde avec des formes géométriques. Il en existe trois types :</p>
+        <ul>
+          <li><strong>Le point</strong> : un lieu précis, comme un hôpital ou une station météo.</li>
+          <li><strong>La ligne</strong> : un trajet ou un cours d'eau, comme une route nationale ou le fleuve Sénégal.</li>
+          <li><strong>Le polygone</strong> : une surface fermée, comme une région, un lac ou une forêt.</li>
+        </ul>
+        <p>Chaque forme est mémorisée par les coordonnées de ses points, et on peut lui associer des informations (son nom, sa population, son type) dans une table d'attributs.</p>
+      </section>
+
+      <!-- ===== 2. Le raster ===== -->
+      <section class="lecon-section" aria-labelledby="raster-titre">
+        <h2 id="raster-titre">Le raster : une grille de cellules</h2>
+        <p>Une donnée raster découpe le territoire en une grille de petits carrés, les <strong>pixels</strong>. Chaque pixel porte une valeur : une couleur, une altitude, une température.</p>
+        <p>Les images satellites, les photos aériennes et les modèles d'élévation sont des rasters.</p>
+        <p>La taille d'un pixel sur le terrain s'appelle la <strong>résolution spatiale</strong>. Un satellite comme Sentinel-2 offre des pixels de 10 mètres, alors que ceux de Landsat font 30 mètres. Plus le pixel est petit, plus l'image est détaillée.</p>
+      </section>
+
+      <!-- ===== 3. Illustration interactive ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="demo-titre">
+        <h2 id="demo-titre">À vous de jouer : zoomez sur la même forme</h2>
+        <p>Les deux dessins représentent exactement la même forme. Déplacez le curseur pour zoomer sur son bord et regardez ce qui se passe de chaque côté.</p>
+
+        <div class="demo">
+          <div class="demo-panneaux">
+
+            <figure class="panneau" style="margin:0">
+              <figcaption>Raster</figcaption>
+              <svg id="svg-raster" viewBox="0 0 240 160" role="img" aria-label="La forme dessinée avec des pixels">
+                <rect width="240" height="160" fill="#dce9ef"/>
+                <g id="cellules"></g>
+              </svg>
+            </figure>
+
+            <figure class="panneau" style="margin:0">
+              <figcaption>Vecteur</figcaption>
+              <svg id="svg-vecteur" viewBox="0 0 240 160" role="img" aria-label="La forme dessinée avec une ligne continue">
+                <rect width="240" height="160" fill="#dce9ef"/>
+                <polygon id="forme" fill="#2f7d4f" stroke="#14313b" stroke-width="2"
+                         stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+              </svg>
+            </figure>
+
+          </div>
+
+          <div class="demo-controle">
+            <label for="zoom">Zoom</label>
+            <input type="range" id="zoom" min="1" max="10" step="1" value="1">
+            <output id="zoom-valeur" for="zoom">×1</output>
+          </div>
+
+          <p class="demo-message" id="demo-message" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- ===== 4. Comparatif ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="comparatif-titre">
+        <h2 id="comparatif-titre">Comparer les deux</h2>
+        <div class="tableau-defile">
+          <table class="comparatif">
+            <caption>Vecteur et raster en un coup d'œil</caption>
+            <thead>
+              <tr><th scope="col"></th><th scope="col">Vecteur</th><th scope="col">Raster</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Composé de</th><td>Points, lignes, polygones</td><td>Une grille de pixels</td></tr>
+              <tr><th scope="row">Exemples</th><td>Limites des régions, routes, hôpitaux</td><td>Images satellites, photos aériennes, altitudes</td></tr>
+              <tr><th scope="row">Quand on zoome</th><td>Reste net</td><td>Les pixels deviennent visibles</td></tr>
+              <tr><th scope="row">Bien adapté pour</th><td>Des objets précis avec des attributs</td><td>Des phénomènes continus (température, végétation)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===== 5. À retenir ===== -->
+      <section class="retenir" aria-labelledby="retenir-titre">
+        <h2 id="retenir-titre">À retenir</h2>
+        <ul>
+          <li>Le vecteur décrit des objets avec des points, des lignes et des polygones.</li>
+          <li>Le raster décrit une surface avec une grille de pixels.</li>
+          <li>La résolution est la taille d'un pixel sur le terrain : plus il est petit, plus il y a de détails.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 6. Quiz du module ===== -->
+      <section class="lecon-section" id="quiz" aria-labelledby="quiz-titre">
+        <h2 id="quiz-titre">Quiz du module</h2>
+        <p>Quatre questions pour vérifier que c'est bien clair. Il faut au moins 3 bonnes réponses pour valider le module.</p>
+        <div id="quiz-conteneur" class="quiz"></div>
+      </section>
+
+      <nav class="nav-modules" aria-label="Navigation entre les modules">
+        <a class="nav-precedent" href="debutant-se-reperer-sur-la-terre.html" rel="prev"><span class="nav-etiquette">Module précédent</span>Se repérer sur la Terre</a>
+        <a class="nav-suivant" href="debutant-d-ou-viennent-les-donnees.html" rel="next"><span class="nav-etiquette">Module suivant</span>D'où viennent les données ?</a>
+      </nav>
+
+    </div>
+  </main>
+
+  <footer class="pied">
+    <div class="conteneur">
+      <p>Géo Nakama : un projet pour apprendre la géomatique par l'image.</p>
+    </div>
+  </footer>
+
+  <!-- ===== Scripts partagés (on remonte d'un niveau avec ../) =====
+       L'ordre compte : progress.js d'abord, car quiz.js s'en sert. -->
+  <script src="../js/progress.js"></script>
+  <script src="../js/quiz.js"></script>
+
+  <!-- ===== Les questions de CE module =====
+       Pour un autre module, on copie ce bloc et on change l'id et les questions.
+       "bonne" est la position de la bonne réponse dans "choix" (on compte à partir de 0). -->
+  <script>
+    creerQuiz(document.getElementById("quiz-conteneur"), {
+      id: "debutant-vecteur-raster",
+      seuil: 3,
+      questions: [
+        {
+          enonce: "Quel type de donnée laisse apparaître des pixels quand on zoome fortement ?",
+          choix: ["Le vecteur", "Le raster", "Les deux", "Aucun des deux"],
+          bonne: 1,
+          explication: "Un raster est une grille de pixels : en zoomant, on finit par voir les carrés. Un vecteur, décrit par des points reliés, reste net."
+        },
+        {
+          enonce: "Quelle forme vecteur convient le mieux pour représenter une route nationale ?",
+          choix: ["Un point", "Un polygone", "Une ligne", "Un pixel"],
+          bonne: 2,
+          explication: "Une route est un tracé allongé : on la représente par une ligne. Le polygone sert aux surfaces (région, lac) et le point aux lieux précis (hôpital)."
+        },
+        {
+          enonce: "Les pixels d'une image Sentinel-2 mesurent 10 mètres de côté. Comment s'appelle cette valeur ?",
+          choix: ["La résolution spatiale", "La projection", "L'échelle de la carte", "L'altitude du satellite"],
+          bonne: 0,
+          explication: "La résolution spatiale est la taille d'un pixel sur le terrain. Plus elle est petite, plus l'image est détaillée."
+        },
+        {
+          enonce: "Lequel de ces éléments est naturellement une donnée raster ?",
+          choix: ["Les limites des régions du Sénégal", "La position d'un hôpital", "Une image satellite d'une ville", "Le tracé d'un fleuve"],
+          bonne: 2,
+          explication: "Une image satellite est une grille de pixels. Les limites de régions (polygones), les hôpitaux (points) et les fleuves (lignes) sont des vecteurs."
+        }
+      ]
+    });
+  </script>
+
+  <!-- ===== Script de l'illustration interactive =====
+       Idée : les deux dessins partagent la même forme. Quand on zoome, on ne change
+       pas la forme : on change seulement la zone visible (l'attribut viewBox du SVG). -->
+  <script>
+    // La forme (liste de points [x, y]) dans un espace de 240 x 160
+    const FORME = [
+      [20,100],[30,70],[55,50],[75,30],[105,25],[130,40],[150,30],
+      [180,35],[210,55],[220,85],[205,115],[180,130],[160,125],
+      [145,145],[115,140],[90,125],[60,130],[35,125]
+    ];
+
+    const LARGEUR = 240;
+    const HAUTEUR = 160;
+    const TAILLE_PIXEL = 5;          // un pixel du raster = 5 unités du dessin
+    const FOYER = [117.5, 32.5];     // le point sur lequel on zoome (sur le bord de la forme)
+    const SVG_NS = "http://www.w3.org/2000/svg";
+
+    // Test : le point (x, y) est-il à l'intérieur de la forme ?
+    function estDansLaForme(x, y) {
+      let dedans = false;
+      for (let i = 0, j = FORME.length - 1; i < FORME.length; j = i++) {
+        const [xi, yi] = FORME[i];
+        const [xj, yj] = FORME[j];
+        if ((yi > y) !== (yj > y) && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) {
+          dedans = !dedans;
+        }
+      }
+      return dedans;
+    }
+
+    // Côté vecteur : on donne les points au polygone
+    document.getElementById("forme").setAttribute(
+      "points", FORME.map(p => p.join(",")).join(" ")
+    );
+
+    // Côté raster : on colore chaque pixel dont le centre est dans la forme
+    const groupeCellules = document.getElementById("cellules");
+    for (let x = 0; x < LARGEUR; x += TAILLE_PIXEL) {
+      for (let y = 0; y < HAUTEUR; y += TAILLE_PIXEL) {
+        if (estDansLaForme(x + TAILLE_PIXEL / 2, y + TAILLE_PIXEL / 2)) {
+          const pixel = document.createElementNS(SVG_NS, "rect");
+          pixel.setAttribute("x", x);
+          pixel.setAttribute("y", y);
+          pixel.setAttribute("width", TAILLE_PIXEL);
+          pixel.setAttribute("height", TAILLE_PIXEL);
+          pixel.setAttribute("fill", "#2f7d4f");
+          pixel.setAttribute("shape-rendering", "crispEdges");
+          groupeCellules.appendChild(pixel);
+        }
+      }
+    }
+
+    // Le zoom : on réduit la zone visible autour du foyer
+    const curseur = document.getElementById("zoom");
+    const valeur = document.getElementById("zoom-valeur");
+    const message = document.getElementById("demo-message");
+    const svgRaster = document.getElementById("svg-raster");
+    const svgVecteur = document.getElementById("svg-vecteur");
+
+    function appliquerZoom() {
+      const z = Number(curseur.value);
+      const largeurVue = LARGEUR / z;
+      const hauteurVue = HAUTEUR / z;
+
+      // On centre la vue sur le foyer, sans sortir du dessin
+      let x = FOYER[0] - largeurVue / 2;
+      let y = FOYER[1] - hauteurVue / 2;
+      x = Math.max(0, Math.min(x, LARGEUR - largeurVue));
+      y = Math.max(0, Math.min(y, HAUTEUR - hauteurVue));
+
+      const vue = x + " " + y + " " + largeurVue + " " + hauteurVue;
+      svgRaster.setAttribute("viewBox", vue);
+      svgVecteur.setAttribute("viewBox", vue);
+
+      valeur.textContent = "×" + z;
+
+      if (z <= 2) {
+        message.textContent = "À ce niveau, les deux dessins paraissent presque identiques. Augmentez le zoom.";
+      } else if (z <= 6) {
+        message.textContent = "Regardez le bord à gauche : des marches apparaissent. Ce sont les pixels.";
+      } else {
+        message.textContent = "Le raster montre ses carrés : c'est sa résolution. Le vecteur reste net, car il est décrit par des points reliés, pas par une grille.";
+      }
+    }
+
+    curseur.addEventListener("input", appliquerZoom);
+    appliquerZoom();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>C'est quoi la géomatique ? : Géo Nakama</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Literata:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="entete">
+    <div class="conteneur">
+      <a class="logo" href="../index.html">Géo Nakama</a>
+      <nav class="navigation" aria-label="Navigation principale">
+        <a href="../index.html#niveaux">Les niveaux</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="lecon">
+    <div class="conteneur">
+
+      <p class="fil"><a href="../index.html">Accueil</a> / Débutant / C'est quoi la géomatique ?</p>
+
+      <div class="lecon-entete">
+        <h1>C'est quoi la géomatique ?</h1>
+        <p>Un mot qui sonne compliqué, pour une idée simple : utiliser l'informatique pour comprendre ce qui se passe quelque part sur la Terre.</p>
+      </div>
+
+      <section class="objectifs" aria-labelledby="objectifs-titre">
+        <h2 id="objectifs-titre">Objectifs de cette leçon</h2>
+        <ul>
+          <li>Définir la géomatique et la donnée spatiale.</li>
+          <li>Distinguer le SIG, la télédétection et la photogrammétrie.</li>
+          <li>Comprendre comment ces trois outils se complètent.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 1. Définition ===== -->
+      <section class="lecon-section" aria-labelledby="definition-titre">
+        <h2 id="definition-titre">La géomatique en une phrase</h2>
+        <p>La <strong>géomatique</strong> réunit les outils et les méthodes qui servent à <strong>collecter, traiter, analyser, représenter et diffuser</strong> des informations géographiques. Son nom vient de la rencontre entre <em>géographie</em> et <em>informatique</em>.</p>
+        <p>Elle intervient partout : gérer l'eau d'une ville, suivre une forêt, planifier une route, prévoir une inondation, localiser un hôpital.</p>
+      </section>
+
+      <!-- ===== 2. Donnée spatiale ===== -->
+      <section class="lecon-section" aria-labelledby="spatiale-titre">
+        <h2 id="spatiale-titre">Une donnée spatiale, c'est quoi ?</h2>
+        <p>Une <strong>donnée spatiale</strong> est une information liée à un <strong>lieu sur la Terre</strong>.</p>
+        <p>« Il y a une école » n'est pas une donnée spatiale : on ne sait pas où elle se trouve. « Il y a une école à telles coordonnées » en est une, et on peut alors la placer sur une carte, la comparer à d'autres lieux et mesurer sa distance à une route.</p>
+        <p>Toute la géomatique repose sur cette idée : <strong>ajouter le « où » à l'information</strong>.</p>
+      </section>
+
+      <!-- ===== 3. Les trois outils (illustration à onglets) ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="outils-titre">
+        <h2 id="outils-titre">Les trois outils à connaître</h2>
+        <p>Choisissez un outil pour voir son principe, son rôle et un exemple.</p>
+
+        <div class="onglets" role="group" aria-label="Choisir un outil">
+          <button type="button" class="onglet" data-cible="sig" aria-pressed="true" aria-controls="domaine-sig">Le SIG</button>
+          <button type="button" class="onglet" data-cible="tele" aria-pressed="false" aria-controls="domaine-tele">La télédétection</button>
+          <button type="button" class="onglet" data-cible="photo" aria-pressed="false" aria-controls="domaine-photo">La photogrammétrie</button>
+        </div>
+
+        <!-- ---- SIG ---- -->
+        <div class="domaine" id="domaine-sig">
+          <svg viewBox="0 0 240 170" role="img" aria-label="Trois couches de cartes superposées">
+            <!-- couche du bas : le fond (eau/terre) -->
+            <polygon points="30,135 120,165 210,135 120,105" fill="#dce9ef" stroke="#14313b" stroke-width="1.5"/>
+            <!-- couche du milieu : les régions -->
+            <polygon points="30,100 120,130 210,100 120,70" fill="#2f7d4f" fill-opacity="0.75" stroke="#14313b" stroke-width="1.5"/>
+            <!-- couche du haut : les points (hôpitaux) -->
+            <polygon points="30,65 120,95 210,65 120,35" fill="#ffffff" fill-opacity="0.85" stroke="#14313b" stroke-width="1.5"/>
+            <circle cx="95" cy="65" r="5" fill="#b3412e"/>
+            <circle cx="135" cy="58" r="5" fill="#b3412e"/>
+            <circle cx="150" cy="72" r="5" fill="#b3412e"/>
+            <!-- flèche verticale -->
+            <line x1="120" y1="20" x2="120" y2="165" stroke="#14313b" stroke-width="1" stroke-dasharray="4 4"/>
+          </svg>
+          <dl>
+            <dt>Le principe</dt>
+            <dd>Superposer des cartes sous forme de couches : fond de carte, régions, routes, hôpitaux… Chaque couche garde ses informations.</dd>
+            <dt>À quoi il sert</dt>
+            <dd>Stocker, interroger, analyser et cartographier des données géographiques.</dd>
+            <dt>Exemple au Sénégal</dt>
+            <dd>Trouver les hôpitaux situés à moins de 5 km d'une route nationale.</dd>
+          </dl>
+        </div>
+
+        <!-- ---- Télédétection ---- -->
+        <div class="domaine" id="domaine-tele" hidden>
+          <svg viewBox="0 0 240 170" role="img" aria-label="Un satellite qui observe la Terre à distance">
+            <!-- faisceau d'observation -->
+            <polygon points="120,42 55,128 185,128" fill="#2a6f97" fill-opacity="0.25"/>
+            <line x1="120" y1="42" x2="55" y2="128" stroke="#2a6f97" stroke-width="1.5" stroke-dasharray="4 4"/>
+            <line x1="120" y1="42" x2="185" y2="128" stroke="#2a6f97" stroke-width="1.5" stroke-dasharray="4 4"/>
+            <!-- satellite -->
+            <rect x="108" y="22" width="24" height="20" fill="#14313b"/>
+            <rect x="70" y="27" width="34" height="10" fill="#2a6f97" stroke="#14313b" stroke-width="1"/>
+            <rect x="136" y="27" width="34" height="10" fill="#2a6f97" stroke="#14313b" stroke-width="1"/>
+            <!-- sol -->
+            <rect x="10" y="128" width="220" height="32" fill="#2f7d4f"/>
+            <line x1="55" y1="128" x2="185" y2="128" stroke="#14313b" stroke-width="3"/>
+            <text x="120" y="152" text-anchor="middle" font-family="Bricolage Grotesque, system-ui, sans-serif" font-size="12" fill="#ffffff">zone observée</text>
+          </svg>
+          <dl>
+            <dt>Le principe</dt>
+            <dd>Un capteur placé sur un satellite, un avion ou un drone mesure la lumière renvoyée par le sol, sans le toucher.</dd>
+            <dt>À quoi elle sert</dt>
+            <dd>Observer la Terre à distance et suivre son évolution dans le temps.</dd>
+            <dt>Exemple au Sénégal</dt>
+            <dd>Suivre l'état de la végétation ou la crue du fleuve Sénégal à partir d'images satellites.</dd>
+          </dl>
+        </div>
+
+        <!-- ---- Photogrammétrie ---- -->
+        <div class="domaine" id="domaine-photo" hidden>
+          <svg viewBox="0 0 240 170" role="img" aria-label="Deux photos aériennes qui se recouvrent en partie">
+            <!-- zone de recouvrement -->
+            <polygon points="100,125 140,125 120,101" fill="#2f7d4f" fill-opacity="0.45"/>
+            <!-- champ de la photo 1 -->
+            <line x1="60" y1="30" x2="20" y2="125" stroke="#14313b" stroke-width="1.5" stroke-dasharray="4 4"/>
+            <line x1="60" y1="30" x2="140" y2="125" stroke="#14313b" stroke-width="1.5" stroke-dasharray="4 4"/>
+            <!-- champ de la photo 2 -->
+            <line x1="180" y1="30" x2="100" y2="125" stroke="#14313b" stroke-width="1.5" stroke-dasharray="4 4"/>
+            <line x1="180" y1="30" x2="220" y2="125" stroke="#14313b" stroke-width="1.5" stroke-dasharray="4 4"/>
+            <!-- les deux prises de vue -->
+            <rect x="48" y="18" width="24" height="14" rx="2" fill="#14313b"/>
+            <rect x="168" y="18" width="24" height="14" rx="2" fill="#14313b"/>
+            <!-- sol -->
+            <rect x="10" y="125" width="220" height="30" fill="#dce9ef"/>
+            <line x1="10" y1="125" x2="230" y2="125" stroke="#14313b" stroke-width="2"/>
+            <text x="120" y="148" text-anchor="middle" font-family="Bricolage Grotesque, system-ui, sans-serif" font-size="12" fill="#14313b">recouvrement</text>
+          </svg>
+          <dl>
+            <dt>Le principe</dt>
+            <dd>On prend plusieurs photos d'un même endroit sous des angles différents. Là où elles se recouvrent, un logiciel retrouve la profondeur, comme nos deux yeux.</dd>
+            <dt>À quoi elle sert</dt>
+            <dd>Mesurer et reconstituer des formes en 3D à partir de photos.</dd>
+            <dt>Exemple au Sénégal</dt>
+            <dd>Modéliser en 3D un quartier ou une carrière avec les photos d'un drone.</dd>
+          </dl>
+        </div>
+      </section>
+
+      <!-- ===== 4. Comment ils se complètent ===== -->
+      <section class="lecon-section" aria-labelledby="complement-titre">
+        <h2 id="complement-titre">Comment ils travaillent ensemble</h2>
+        <p>Ces trois outils ne se font pas concurrence : ils se passent le relais.</p>
+        <p>Prenons l'extension d'une ville comme Dakar. Les <strong>images satellites</strong> (télédétection) montrent les zones construites à chaque époque. Les <strong>photos de drone</strong> (photogrammétrie) donnent le relief et les bâtiments en 3D d'un quartier précis. Le <strong>SIG</strong> rassemble tout cela en couches, mesure les surfaces, compare les dates et produit la carte finale.</p>
+      </section>
+
+      <!-- ===== 5. À retenir ===== -->
+      <section class="retenir" aria-labelledby="retenir-titre">
+        <h2 id="retenir-titre">À retenir</h2>
+        <ul>
+          <li>La géomatique collecte, traite, analyse, représente et diffuse des informations géographiques.</li>
+          <li>Une donnée spatiale est liée à un lieu sur la Terre.</li>
+          <li>La télédétection et la photogrammétrie produisent des données ; le SIG les rassemble, les analyse et les cartographie.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 6. Quiz ===== -->
+      <section class="lecon-section" id="quiz" aria-labelledby="quiz-titre">
+        <h2 id="quiz-titre">Quiz du module</h2>
+        <p>Quatre questions pour vérifier que c'est bien clair. Il faut au moins 3 bonnes réponses pour valider le module.</p>
+        <div id="quiz-conteneur" class="quiz"></div>
+      </section>
+
+      <nav class="nav-modules" aria-label="Navigation entre les modules">
+        <a class="nav-precedent" href="../index.html#niveaux" rel="prev"><span class="nav-etiquette">Retour</span>Les niveaux</a>
+        <a class="nav-suivant" href="debutant-lire-une-carte.html" rel="next"><span class="nav-etiquette">Module suivant</span>Lire une carte</a>
+      </nav>
+
+    </div>
+  </main>
+
+  <footer class="pied">
+    <div class="conteneur">
+      <p>Géo Nakama : un projet pour apprendre la géomatique par l'image.</p>
+    </div>
+  </footer>
+
+  <script src="../js/progress.js"></script>
+  <script src="../js/quiz.js"></script>
+
+  <!-- Les questions de CE module -->
+  <script>
+    creerQuiz(document.getElementById("quiz-conteneur"), {
+      id: "debutant-quest-ce-que-la-geomatique",
+      seuil: 3,
+      questions: [
+        {
+          enonce: "Qu'est-ce qui rend une donnée « spatiale » ?",
+          choix: [
+            "Elle est stockée dans un tableur",
+            "Elle est associée à une localisation sur la Terre",
+            "Elle provient d'un satellite",
+            "Elle contient des chiffres"
+          ],
+          bonne: 1,
+          explication: "Une donnée spatiale est liée à un lieu. Elle peut venir d'un satellite, d'un GPS ou d'un relevé de terrain : ce qui compte, c'est son « où »."
+        },
+        {
+          enonce: "Quel outil sert à stocker, analyser et cartographier des données géographiques en couches ?",
+          choix: ["Le SIG", "La télédétection", "La photogrammétrie", "Le GPS"],
+          bonne: 0,
+          explication: "Le SIG (système d'information géographique) rassemble les données en couches, les analyse et produit les cartes. Le GPS, lui, sert surtout à se positionner."
+        },
+        {
+          enonce: "Quelle technique observe la Terre à distance, par exemple depuis un satellite ?",
+          choix: ["Le SIG", "Le levé topographique au sol", "La télédétection", "La cartographie sur papier"],
+          bonne: 2,
+          explication: "La télédétection mesure la lumière renvoyée par le sol grâce à des capteurs placés sur satellite, avion ou drone, sans contact direct."
+        },
+        {
+          enonce: "À quoi sert la photogrammétrie ?",
+          choix: [
+            "Calculer un indice de végétation",
+            "Changer la projection d'une carte",
+            "Stocker des tables d'attributs",
+            "Mesurer et reconstituer des formes en 3D à partir de photos qui se recouvrent"
+          ],
+          bonne: 3,
+          explication: "En comparant des photos prises sous des angles différents, la photogrammétrie retrouve le relief et les dimensions des objets."
+        }
+      ]
+    });
+  </script>
+
+  <!-- Script des onglets : un seul panneau visible à la fois -->
+  <script>
+    const boutons = document.querySelectorAll(".onglet");
+    const panneaux = {
+      sig:   document.getElementById("domaine-sig"),
+      tele:  document.getElementById("domaine-tele"),
+      photo: document.getElementById("domaine-photo")
+    };
+
+    boutons.forEach(function (bouton) {
+      bouton.addEventListener("click", function () {
+        const cible = bouton.dataset.cible;
+
+        boutons.forEach(function (b) {
+          b.setAttribute("aria-pressed", b === bouton ? "true" : "false");
+        });
+
+        Object.keys(panneaux).forEach(function (nom) {
+          panneaux[nom].hidden = (nom !== cible);
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
