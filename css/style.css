@@ -687,3 +687,287 @@ button:focus-visible {
     font-size: 0.92rem;
   }
 }
+
+/* ==========================================================
+   FOND « CARTE MARINE » DE LA PAGE D'ACCUEIL (ajouté à l'étape 11)
+   Un décor original (rose des vents, route pointillée, vagues), très discret
+   pour ne pas gêner la lecture. Le chemin part du dossier css/, d'où « ../img/ ».
+   ========================================================== */
+.hero {
+  background: var(--papier) url("../img/carte-marine.svg") center bottom / cover no-repeat;
+  border-bottom: 1px solid var(--trait);
+}
+
+/* Sur téléphone, l'image est réduite et calée à gauche pour garder la rose des vents visible */
+@media (max-width: 52rem) {
+  .hero {
+    background-position: left bottom;
+    background-size: auto 62%;
+  }
+}
+
+/* ==========================================================
+   MODULE 2 INTERMÉDIAIRE : requêtes, tables et jointures (étape 12)
+   ========================================================== */
+
+/* Trois menus côte à côte pour construire la requête */
+.requete {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.requete label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-family: var(--police-titre);
+  font-weight: 650;
+  font-size: 0.95rem;
+}
+
+.requete select,
+.requete input {
+  min-width: 9rem;
+  padding: 0.55rem 0.7rem;
+  font: inherit;
+  color: var(--encre);
+  background: #fff;
+  border: 2px solid var(--trait);
+  border-radius: 4px;
+}
+
+.requete select:hover,
+.requete input:hover { border-color: var(--encre); }
+
+/* Bloc de code (requêtes SQL) */
+.code-sql {
+  margin: 0.75rem 0;
+  padding: 0.85rem 1rem;
+  overflow-x: auto;
+  font-family: ui-monospace, Consolas, "Courier New", monospace;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--papier);
+  background: var(--encre);
+  border-radius: 4px;
+  white-space: pre-wrap;
+}
+
+code {
+  padding: 0.1rem 0.35rem;
+  font-family: ui-monospace, Consolas, "Courier New", monospace;
+  font-size: 0.92em;
+  background: #e4ebe6;
+  border-radius: 3px;
+}
+
+.retenir code { color: var(--encre); }
+
+/* Lignes de la table : retenues, écartées, sélectionnée */
+.comparatif tr.retenue th,
+.comparatif tr.retenue td { background: #fbf0c9; font-weight: 600; }
+
+.comparatif tr.ecartee th,
+.comparatif tr.ecartee td { color: var(--texte-doux); opacity: 0.65; }
+
+.comparatif tr.selection th,
+.comparatif tr.selection td {
+  border-top: 2px solid var(--encre);
+  border-bottom: 2px solid var(--encre);
+}
+
+/* Le nom d'un centre est un bouton qui ressemble à un lien */
+.lien-ligne {
+  padding: 0;
+  font: inherit;
+  color: var(--eau);
+  text-align: left;
+  text-decoration: underline;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/* Petites pastilles des codes de région, de la couleur de la région sur la carte */
+.puce {
+  display: inline-block;
+  padding: 0.05rem 0.55rem;
+  font-family: var(--police-titre);
+  font-weight: 650;
+  border: 1px solid var(--encre);
+  border-radius: 4px;
+}
+
+.puce-r1 { background: #e3efe6; }
+.puce-r2 { background: #dde9f0; }
+.puce-r3 { background: #f1ebd9; }
+
+/* Les éléments d'une grille peuvent rétrécir : sans cela, un tableau large élargit toute la colonne
+   et fait déborder la page sur téléphone (corrigé à l'étape 12). */
+.demo-panneaux > * { min-width: 0; }
+
+/* ==========================================================
+   MODULE 3 INTERMÉDIAIRE : tampon, légende de la carte (étape 13)
+   ========================================================== */
+
+/* Case à cocher avec son texte */
+.case {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+  font-family: var(--police-titre);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.case input {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--vegetation);
+}
+
+/* Légende sous la carte : pastilles de couleur suivies d'un texte */
+.legende-carte {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 1.25rem;
+  margin: 0.75rem 0 0;
+  font-size: 0.95rem;
+  color: var(--texte-doux);
+}
+
+.pastille-legende {
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+  margin-right: 0.35rem;
+  vertical-align: -0.1rem;
+  border-radius: 50%;
+}
+
+.pastille-legende.creux {
+  background: #fff;
+  border: 2px solid #b3412e;
+}
+
+/* ==========================================================
+   MODULE 4 INTERMÉDIAIRE : images satellites (étape 14)
+   ========================================================== */
+
+/* La scène dessinée dans un canvas : les pixels doivent rester carrés et bien visibles */
+.scene {
+  display: block;
+  width: 100%;
+  max-width: 30rem;
+  height: auto;
+  margin: 1rem auto 0;
+  border: 1px solid var(--trait);
+  background: #fff;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Barre d'échelle sous la scène : sa largeur est une fraction de celle de l'image */
+.barre-echelle {
+  max-width: 30rem;
+  margin: 0.4rem auto 0;
+}
+
+.trait-echelle {
+  padding-top: 0.15rem;
+  font-family: var(--police-titre);
+  font-size: 0.85rem;
+  text-align: center;
+  border-top: 3px solid var(--encre);
+}
+
+/* Histogramme des signatures spectrales : une colonne par bande */
+.barres {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+  height: 10rem;
+  margin-top: 1rem;
+}
+
+.barres-col {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
+  font-family: var(--police-titre);
+  font-size: 0.85rem;
+}
+
+.barres-col .valeur { margin-bottom: 0.2rem; font-weight: 650; }
+
+.barres-col .barre {
+  width: 100%;
+  min-height: 2px;
+  background: var(--eau);
+  border-radius: 3px 3px 0 0;
+}
+
+.barres-col .barre.pir { background: var(--vegetation); }
+
+.barres-col .nom {
+  margin-top: 0.3rem;
+  color: var(--texte-doux);
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* ==========================================================
+   MODULE 5 INTERMÉDIAIRE : légende en dégradé du NDVI (étape 15)
+   ========================================================== */
+.rampe {
+  max-width: 30rem;
+  height: 0.9rem;
+  margin: 0.6rem auto 0;
+  border: 1px solid var(--encre);
+  border-radius: 3px;
+}
+
+.rampe-etiquettes {
+  display: flex;
+  justify-content: space-between;
+  max-width: 30rem;
+  margin: 0.25rem auto 0;
+  font-size: 0.85rem;
+  color: var(--texte-doux);
+}
+
+/* ==========================================================
+   MODULE 6 INTERMÉDIAIRE : légende des classes (étape 16)
+   ========================================================== */
+.legende-titre {
+  margin: 0 0 0.5rem;
+  font-family: var(--police-titre);
+  font-weight: 650;
+}
+
+.legende-classes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legende-classes li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 0.45rem;
+}
+
+.pastille-classe {
+  flex: none;
+  width: 1.6rem;
+  height: 1.1rem;
+  border: 1px solid var(--encre);
+  border-radius: 2px;
+}

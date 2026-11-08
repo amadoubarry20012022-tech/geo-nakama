@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cartographier proprement : Géo Nakama</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Literata:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="entete">
+    <div class="conteneur">
+      <a class="logo" href="../index.html">Géo Nakama</a>
+      <nav class="navigation" aria-label="Navigation principale">
+        <a href="../index.html#niveaux">Les niveaux</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="lecon">
+    <div class="conteneur">
+
+      <p class="fil"><a href="../index.html">Accueil</a> / Intermédiaire / Cartographier proprement</p>
+
+      <p class="quiz-info" id="avis-niveau" hidden>
+        Ce module appartient au niveau Intermédiaire, qui s'ouvre après le quiz final du niveau Débutant.
+        Vous pouvez le lire, mais le parcours est pensé pour être suivi dans l'ordre :
+        <a href="debutant-quiz-final.html">voir le niveau Débutant</a>.
+      </p>
+
+      <div class="lecon-entete">
+        <h1>Cartographier proprement</h1>
+        <p>Une carte est un message. Les mêmes données, habillées autrement, peuvent dire des choses très différentes : il faut donc choisir ses figurés, ses classes et ses couleurs en connaissance de cause.</p>
+      </div>
+
+      <section class="objectifs" aria-labelledby="objectifs-titre">
+        <h2 id="objectifs-titre">Objectifs de cette leçon</h2>
+        <ul>
+          <li>Choisir la variable visuelle adaptée à la nature de l'information.</li>
+          <li>Classer des données et choisir une palette sans fausser le message.</li>
+          <li>Vérifier la mise en page et l'accessibilité d'une carte.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 1. Variables visuelles ===== -->
+      <section class="lecon-section" aria-labelledby="variables-titre">
+        <h2 id="variables-titre">Choisir la bonne variable visuelle</h2>
+        <p>Pour dessiner une information, un cartographe dispose de quelques « variables visuelles ». Chacune parle à l'œil d'une manière précise.</p>
+
+        <figure class="schema">
+          <svg viewBox="0 0 360 215" role="img" aria-labelledby="var-titre var-desc">
+            <title id="var-titre">Les quatre variables visuelles</title>
+            <desc id="var-desc">Quatre rangées : des cercles de taille croissante pour une quantité, des carrés du clair au foncé pour une quantité ou un ordre, des carrés de couleurs différentes pour des catégories, et des symboles de formes différentes pour des catégories.</desc>
+            <g font-family="Bricolage Grotesque, system-ui, sans-serif" fill="#14313b">
+              <text x="10" y="30" font-size="14" font-weight="700">Taille</text>
+              <text x="10" y="47" font-size="11" fill="#4a6169">une quantité</text>
+              <text x="10" y="84" font-size="14" font-weight="700">Valeur</text>
+              <text x="10" y="101" font-size="11" fill="#4a6169">une quantité ou un ordre</text>
+              <text x="10" y="138" font-size="14" font-weight="700">Teinte</text>
+              <text x="10" y="155" font-size="11" fill="#4a6169">des catégories</text>
+              <text x="10" y="192" font-size="14" font-weight="700">Forme</text>
+              <text x="10" y="209" font-size="11" fill="#4a6169">des catégories</text>
+            </g>
+            <!-- taille -->
+            <g fill="#2a6f97">
+              <circle cx="165" cy="35" r="4"/><circle cx="195" cy="35" r="7"/><circle cx="231" cy="35" r="10"/><circle cx="275" cy="35" r="13"/><circle cx="326" cy="35" r="16"/>
+            </g>
+            <!-- valeur -->
+            <rect x="150" y="75" width="30" height="30" fill="#deebf7"/><rect x="192" y="75" width="30" height="30" fill="#9ecae1"/><rect x="234" y="75" width="30" height="30" fill="#4292c6"/><rect x="276" y="75" width="30" height="30" fill="#2171b5"/><rect x="318" y="75" width="30" height="30" fill="#08306b"/>
+            <!-- teinte -->
+            <rect x="150" y="129" width="30" height="30" fill="#e41a1c"/><rect x="192" y="129" width="30" height="30" fill="#377eb8"/><rect x="234" y="129" width="30" height="30" fill="#4daf4a"/><rect x="276" y="129" width="30" height="30" fill="#984ea3"/><rect x="318" y="129" width="30" height="30" fill="#ff7f00"/>
+            <!-- forme -->
+            <g fill="#14313b">
+              <circle cx="165" cy="189" r="13"/>
+              <rect x="180" y="176" width="26" height="26"/>
+              <polygon points="249,176 262,202 236,202"/>
+              <polygon points="291,175 304,189 291,203 278,189"/>
+              <polygon points="326,175 330,185 341,185 332,192 336,203 326,196 316,203 320,192 311,185 322,185"/>
+            </g>
+          </svg>
+        </figure>
+
+        <ul>
+          <li><strong>Une quantité</strong> (une densité, un taux) se représente par la <strong>valeur</strong> (du clair au foncé) ou par la <strong>taille</strong> : l'œil lit naturellement « plus foncé, plus grand = plus ».</li>
+          <li><strong>Des catégories</strong> (un type de sol, un type de centre de santé) se représentent par la <strong>teinte</strong> ou la <strong>forme</strong> : aucune n'est « plus » qu'une autre.</li>
+          <li>Évitez d'utiliser des teintes différentes pour une quantité : rien n'indique quelle couleur vaut « plus ».</li>
+        </ul>
+      </section>
+
+      <!-- ===== 2. Atelier ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="atelier-titre">
+        <h2 id="atelier-titre">À vous de jouer : l'atelier de classification</h2>
+        <p>Voici une carte fictive de douze zones. Quand on colore des zones d'après une quantité, on les range dans des <strong>classes</strong> : c'est une carte <strong>choroplèthe</strong>. Réglez la variable, la méthode, le nombre de classes et la palette, puis regardez comment la carte change de message. Les données sont fictives.</p>
+
+        <div class="demo">
+          <div class="requete">
+            <div>
+              <label for="choix-variable">Variable</label>
+              <select id="choix-variable">
+                <option value="densite" selected>Densité (hab/km²)</option>
+                <option value="effectif">Nombre d'habitants</option>
+              </select>
+            </div>
+            <div>
+              <label for="choix-methode">Méthode de classification</label>
+              <select id="choix-methode">
+                <option value="egal" selected>Intervalles égaux</option>
+                <option value="quantile">Quantiles</option>
+                <option value="jenks">Seuils naturels (Jenks)</option>
+              </select>
+            </div>
+            <div>
+              <label for="choix-palette">Palette</label>
+              <select id="choix-palette">
+                <option value="sequentielle" selected>Séquentielle (jaune à vert foncé)</option>
+                <option value="divergente">Divergente (brun à bleu-vert)</option>
+                <option value="arcenciel">Arc-en-ciel</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="demo-controle">
+            <label for="nb-classes">Nombre de classes</label>
+            <input type="range" id="nb-classes" min="3" max="7" step="1" value="5" aria-describedby="texte-carto">
+            <output id="valeur-classes" for="nb-classes"></output>
+          </div>
+
+          <label class="case"><input type="checkbox" id="daltonisme"> Simuler un daltonisme rouge-vert (approximation)</label>
+
+          <div class="demo-panneaux" style="margin-top:1rem">
+            <figure class="panneau" style="margin:0">
+              <figcaption id="titre-carte">La carte</figcaption>
+              <svg id="svg-carto" viewBox="0 0 360 220" role="img" aria-label="Carte fictive de douze zones colorées par classes"></svg>
+            </figure>
+            <div>
+              <p class="legende-titre" id="titre-legende">Légende</p>
+              <ul class="legende-classes" id="legende-classes"></ul>
+            </div>
+          </div>
+
+          <figure class="schema" style="margin:1rem auto 0;max-width:40rem">
+            <figcaption style="font-family:var(--police-titre);font-weight:650;margin-bottom:0.3rem">Où tombent les seuils ? (chaque point est une zone)</figcaption>
+            <svg id="svg-bande" viewBox="0 0 360 78" role="img" aria-label="Valeurs des douze zones sur un axe, avec les seuils entre classes"></svg>
+          </figure>
+
+          <p class="demo-message" id="texte-carto" aria-live="polite" style="min-height:8em"></p>
+        </div>
+
+        <div class="piege">
+          <strong>Choisir ses classes, c'est déjà choisir son message.</strong> Avec les intervalles égaux, une seule zone très forte écrase les autres dans les premières classes. Avec les quantiles, chaque couleur a son quota de zones, même si les valeurs sont très proches. Aucune méthode n'est neutre : indiquez laquelle vous avez utilisée, et essayez-en plusieurs avant de conclure.
+        </div>
+      </section>
+
+      <!-- ===== 3. Palettes ===== -->
+      <section class="lecon-section" aria-labelledby="palettes-titre">
+        <h2 id="palettes-titre">Choisir ses couleurs</h2>
+        <p>Il existe trois grandes familles de palettes :</p>
+        <ul>
+          <li>la palette <strong>séquentielle</strong> (du clair au foncé, une seule teinte ou un passage doux) : pour une quantité qui va du faible au fort ;</li>
+          <li>la palette <strong>divergente</strong> (deux teintes qui se rejoignent au centre clair) : pour une quantité avec un point de référence significatif, comme un écart à la moyenne ou une évolution positive ou négative ;</li>
+          <li>la palette <strong>qualitative</strong> (des teintes bien distinctes) : pour des catégories sans ordre.</li>
+        </ul>
+        <p>Le <strong>daltonisme</strong> touche une partie non négligeable de la population, surtout des hommes, et concerne le plus souvent la distinction du rouge et du vert. Pour qu'une carte reste lisible, il faut que l'ordre des classes se lise aussi à la <strong>luminosité</strong> (du clair au foncé), et pas seulement à la teinte. Cochez la case de simulation dans l'atelier : une palette arc-en-ciel y devient beaucoup plus confuse qu'une palette séquentielle. Des outils comme ColorBrewer proposent des palettes déjà testées.</p>
+      </section>
+
+      <!-- ===== 4. Mise en page ===== -->
+      <section class="lecon-section" aria-labelledby="miseenpage-titre">
+        <h2 id="miseenpage-titre">La liste de contrôle d'une carte finie</h2>
+        <p>Avant de diffuser une carte, vérifiez :</p>
+        <ul>
+          <li><strong>Un titre</strong> qui dit ce que montre la carte, où et quand.</li>
+          <li><strong>Une légende</strong> complète, avec les unités et les classes.</li>
+          <li><strong>Une échelle</strong>, et une <strong>flèche du nord</strong> si l'orientation compte.</li>
+          <li><strong>La source et la date</strong> des données, et le nom de l'auteur.</li>
+          <li><strong>Une hiérarchie claire</strong> : le thème principal ressort, le fond de carte (limites, routes) reste discret.</li>
+          <li><strong>Un texte lisible</strong> : assez gros, bien contrasté, sans chevauchements.</li>
+          <li><strong>Peu de classes et peu de couleurs</strong> : de 4 à 6 classes suffisent presque toujours.</li>
+        </ul>
+        <p>Une carte réussie se comprend en quelques secondes, sans explication orale.</p>
+      </section>
+
+      <!-- ===== 5. À retenir ===== -->
+      <section class="retenir" aria-labelledby="retenir-titre">
+        <h2 id="retenir-titre">À retenir</h2>
+        <ul>
+          <li>Une quantité se montre par la valeur (clair à foncé) ou la taille, des catégories par la teinte ou la forme.</li>
+          <li>On cartographie des taux ou des densités, pas des effectifs bruts : les grandes zones ne doivent pas écraser les petites.</li>
+          <li>La méthode de classification, le nombre de classes et la palette changent le message : il faut les choisir et les annoncer.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 6. Quiz ===== -->
+      <section class="lecon-section" id="quiz" aria-labelledby="quiz-titre">
+        <h2 id="quiz-titre">Quiz du module</h2>
+        <p>Quatre questions pour vérifier que c'est bien clair. Il faut au moins 3 bonnes réponses pour valider le module.</p>
+        <div id="quiz-conteneur" class="quiz"></div>
+      </section>
+
+      <nav class="nav-modules" aria-label="Navigation entre les modules">
+        <a class="nav-precedent" href="intermediaire-ndvi.html" rel="prev"><span class="nav-etiquette">Module précédent</span>Compositions colorées et NDVI</a>
+        <a class="nav-suivant" href="intermediaire-quiz-final.html" rel="next"><span class="nav-etiquette">Quiz final</span>Quiz final du niveau Intermédiaire</a>
+      </nav>
+
+    </div>
+  </main>
+
+  <footer class="pied">
+    <div class="conteneur">
+      <p>Géo Nakama : un projet pour apprendre la géomatique par l'image.</p>
+    </div>
+  </footer>
+
+  <script src="../js/progress.js"></script>
+  <script src="../js/quiz.js"></script>
+
+  <script>
+    if (!Progression.estValide("debutant-quiz-final")) {
+      document.getElementById("avis-niveau").hidden = false;
+    }
+  </script>
+
+  <!-- Les questions de CE module -->
+  <script>
+    creerQuiz(document.getElementById("quiz-conteneur"), {
+      id: "intermediaire-cartographier-proprement",
+      seuil: 3,
+      questions: [
+        {
+          enonce: "Pour représenter une densité de population, c'est-à-dire une quantité, quelle variable visuelle choisir ?",
+          choix: [
+            "La forme des symboles",
+            "La valeur, du clair au foncé",
+            "Des teintes différentes, sans ordre",
+            "L'orientation des symboles"
+          ],
+          bonne: 1,
+          explication: "L'œil lit « plus foncé = plus ». La valeur (ou la taille) convient aux quantités. La forme et la teinte sont réservées aux catégories."
+        },
+        {
+          enonce: "Pourquoi est-il trompeur de colorer des zones d'après des effectifs bruts, comme un nombre d'habitants ?",
+          choix: [
+            "Parce que les effectifs sont toujours faux",
+            "Parce que les couleurs ne s'appliquent pas aux nombres entiers",
+            "Parce que les grandes zones ont mécaniquement plus d'habitants et attirent l'œil : mieux vaut une densité ou un taux",
+            "Parce qu'on ne peut cartographier que des pourcentages"
+          ],
+          bonne: 2,
+          explication: "Une grande zone peut avoir beaucoup d'habitants tout en étant peu dense. Une densité ou un taux ramène chaque zone à une même base et rend les zones comparables."
+        },
+        {
+          enonce: "Quelle méthode de classification met à peu près le même nombre de zones dans chaque classe ?",
+          choix: ["Les quantiles", "Les intervalles égaux", "Les seuils naturels (Jenks)", "Aucune méthode"],
+          bonne: 0,
+          explication: "Les quantiles découpent les zones classées par valeur en groupes d'effectif comparable. Les intervalles égaux découpent la plage de valeurs en tranches de même largeur, quel que soit le nombre de zones dedans."
+        },
+        {
+          enonce: "Que faire pour que votre carte reste lisible pour des personnes daltoniennes ?",
+          choix: [
+            "Opposer le rouge et le vert pour bien contraster",
+            "Utiliser le plus de couleurs possible",
+            "Supprimer la légende pour simplifier",
+            "Faire varier aussi la luminosité et éviter de ne reposer que sur l'opposition rouge-vert"
+          ],
+          bonne: 3,
+          explication: "Quand l'ordre des classes se lit aussi par la luminosité (du clair au foncé), la carte reste compréhensible même si certaines teintes se confondent."
+        }
+      ]
+    });
+  </script>
+
+  <!-- Script de l'atelier : classer des données et colorer une carte -->
+  <script>
+    const SVG_NS = "http://www.w3.org/2000/svg";
+
+    // ---------- Les données (fictives) : 12 zones d'un quadrillage irrégulier ----------
+    const XS = [20, 70, 150, 240, 340];
+    const YS = [20, 60, 130, 200];
+    const DECALAGES = { "1,1": [-5, 4], "2,1": [6, -4], "3,1": [-4, -5], "1,2": [5, 5], "2,2": [-6, 3], "3,2": [4, -3] };
+    const DENSITES = [35, 60, 25, 18,   120, 450, 90, 30,   70, 210, 55, 22];   // hab/km², ligne par ligne
+    const KM2_PAR_UNITE = 0.2;   // 1 unité² du dessin = 0,2 km²
+
+    function sommet(i, j) {
+      const d = DECALAGES[i + "," + j] || [0, 0];
+      return [XS[i] + d[0], YS[j] + d[1]];
+    }
+
+    // L'aire d'un polygone (formule du lacet)
+    function aire(points) {
+      let s = 0;
+      for (let i = 0; i < points.length; i++) {
+        const a = points[i], b = points[(i + 1) % points.length];
+        s += a[0] * b[1] - b[0] * a[1];
+      }
+      return Math.abs(s) / 2;
+    }
+
+    const ZONES = [];
+    for (let r = 0; r < 3; r++) {
+      for (let c = 0; c < 4; c++) {
+        const points = [sommet(c, r), sommet(c + 1, r), sommet(c + 1, r + 1), sommet(c, r + 1)];
+        const km2 = aire(points) * KM2_PAR_UNITE;
+        const densite = DENSITES[r * 4 + c];
+        ZONES.push({
+          points: points,
+          centre: [points.reduce(function (s, p) { return s + p[0]; }, 0) / 4, points.reduce(function (s, p) { return s + p[1]; }, 0) / 4],
+          km2: km2,
+          densite: densite,
+          effectif: Math.round(densite * km2 / 100) * 100
+        });
+      }
+    }
+
+    // ---------- Les palettes ----------
+    const PALETTES = {
+      sequentielle: ["#ffffcc", "#d9f0a3", "#addd8e", "#78c679", "#41ab5d", "#238443", "#005a32"],
+      divergente:   ["#8c510a", "#d8b365", "#f6e8c3", "#f5f5f5", "#c7eae5", "#5ab4ac", "#01665e"],
+      arcenciel:    ["#7f00ff", "#0000ff", "#00bfff", "#00ff00", "#ffff00", "#ff8000", "#ff0000"]
+    };
+    // On prend k couleurs réparties dans la palette de 7
+    function couleursDe(palette, k) {
+      const p = PALETTES[palette], out = [];
+      for (let i = 0; i < k; i++) out.push(p[Math.round(i * (p.length - 1) / (k - 1))]);
+      return out;
+    }
+
+    // ---------- Simulation approximative d'un daltonisme rouge-vert (déficience du vert) ----------
+    function versLineaire(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+    function versSrgb(c) { c = Math.max(0, Math.min(1, c)); return Math.round(255 * (c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055)); }
+    const MATRICE = [[0.367322, 0.860646, -0.227968], [0.280085, 0.672501, 0.047413], [-0.011820, 0.042940, 0.968881]];
+    function hexVersRgb(h) { return [parseInt(h.substr(1, 2), 16), parseInt(h.substr(3, 2), 16), parseInt(h.substr(5, 2), 16)]; }
+    function simuler(hex) {
+      const lin = hexVersRgb(hex).map(versLineaire);
+      const rgb = MATRICE.map(function (ligne) { return versSrgb(ligne[0] * lin[0] + ligne[1] * lin[1] + ligne[2] * lin[2]); });
+      return "rgb(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")";
+    }
+    function luminance(rgbOuHex) {
+      let rgb;
+      if (rgbOuHex.charAt(0) === "#") rgb = hexVersRgb(rgbOuHex);
+      else rgb = rgbOuHex.match(/\d+/g).map(Number);
+      return (0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]) / 255;
+    }
+
+    // ---------- Les trois méthodes de classification ----------
+    // Chacune renvoie k + 1 bornes : la classe i contient les valeurs v telles que bornes[i] < v <= bornes[i+1] (la première inclut le minimum)
+    function bornesEgales(valeurs, k) {
+      const min = Math.min.apply(null, valeurs), max = Math.max.apply(null, valeurs);
+      const b = [];
+      for (let i = 0; i <= k; i++) b.push(min + (max - min) * i / k);
+      return b;
+    }
+
+    function bornesQuantiles(valeurs, k) {
+      const tri = valeurs.slice().sort(function (a, b) { return a - b; });
+      const n = tri.length, b = [tri[0]];
+      for (let i = 1; i < k; i++) b.push(tri[Math.ceil(i * n / k) - 1]);
+      b.push(tri[n - 1]);
+      return b;
+    }
+
+    // Seuils naturels de Jenks : on cherche les coupures qui rendent les classes les plus homogènes possible
+    function bornesJenks(valeurs, k) {
+      const d = valeurs.slice().sort(function (a, b) { return a - b; });
+      const n = d.length;
+      const m1 = [], m2 = [];
+      for (let i = 0; i <= n; i++) { m1.push(new Array(k + 1).fill(0)); m2.push(new Array(k + 1).fill(Infinity)); }
+      for (let i = 1; i <= k; i++) { m1[1][i] = 1; m2[1][i] = 0; }
+      for (let l = 2; l <= n; l++) {
+        let s1 = 0, s2 = 0, w = 0, variance = 0;
+        for (let m = 1; m <= l; m++) {
+          const bas = l - m + 1, val = d[bas - 1];
+          w++; s1 += val; s2 += val * val;
+          variance = s2 - (s1 * s1) / w;
+          const i4 = bas - 1;
+          if (i4 !== 0) {
+            for (let j = 2; j <= k; j++) {
+              if (m2[l][j] >= variance + m2[i4][j - 1]) { m1[l][j] = bas; m2[l][j] = variance + m2[i4][j - 1]; }
+            }
+          }
+        }
+        m1[l][1] = 1; m2[l][1] = variance;
+      }
+      const b = new Array(k + 1);
+      b[0] = d[0]; b[k] = d[n - 1];
+      let idx = n;
+      for (let j = k; j >= 2; j--) {
+        b[j - 1] = d[m1[idx][j] - 2];
+        idx = m1[idx][j] - 1;
+      }
+      return b;
+    }
+
+    // La classe d'une valeur : la première dont la borne haute est atteinte
+    function classeDe(v, bornes) {
+      for (let i = 1; i < bornes.length; i++) if (v <= bornes[i] + 1e-9) return i - 1;
+      return bornes.length - 2;
+    }
+
+    // ---------- Dessin ----------
+    const svgCarte = document.getElementById("svg-carto");
+    const svgBande = document.getElementById("svg-bande");
+    const legende = document.getElementById("legende-classes");
+    const texte = document.getElementById("texte-carto");
+    const choixVariable = document.getElementById("choix-variable");
+    const choixMethode = document.getElementById("choix-methode");
+    const choixPalette = document.getElementById("choix-palette");
+    const curseurClasses = document.getElementById("nb-classes");
+    const valeurClasses = document.getElementById("valeur-classes");
+    const caseDalto = document.getElementById("daltonisme");
+
+    function creer(nom, attributs) {
+      const e = document.createElementNS(SVG_NS, nom);
+      Object.keys(attributs).forEach(function (k) { e.setAttribute(k, attributs[k]); });
+      return e;
+    }
+    function fr(v) { return Math.round(v).toLocaleString("fr-FR"); }
+
+    function majAtelier() {
+      const variable = choixVariable.value;
+      const k = Number(curseurClasses.value);
+      valeurClasses.textContent = k;
+      const valeurs = ZONES.map(function (z) { return z[variable]; });
+      const unite = variable === "densite" ? "hab/km²" : "habitants";
+
+      let bornes;
+      if (choixMethode.value === "egal") bornes = bornesEgales(valeurs, k);
+      else if (choixMethode.value === "quantile") bornes = bornesQuantiles(valeurs, k);
+      else bornes = bornesJenks(valeurs, k);
+
+      const classes = valeurs.map(function (v) { return classeDe(v, bornes); });
+      const base = couleursDe(choixPalette.value, k);
+      const couleurs = base.map(function (c) { return caseDalto.checked ? simuler(c) : c; });
+
+      document.getElementById("titre-carte").textContent = variable === "densite"
+        ? "Densité de population (hab/km²), zones fictives" : "Nombre d'habitants, zones fictives";
+      document.getElementById("titre-legende").textContent = "Légende (" + unite + ")";
+
+      // La carte
+      svgCarte.replaceChildren();
+      ZONES.forEach(function (z, i) {
+        const fond = couleurs[classes[i]];
+        svgCarte.appendChild(creer("polygon", {
+          points: z.points.map(function (p) { return p.join(","); }).join(" "),
+          fill: fond, stroke: "#14313b", "stroke-width": 1.2, "stroke-linejoin": "round"
+        }));
+        const etiquette = creer("text", {
+          x: z.centre[0], y: z.centre[1] + 3, "text-anchor": "middle",
+          "font-family": "Bricolage Grotesque, system-ui, sans-serif", "font-size": 10, "font-weight": 600,
+          fill: luminance(fond) < 0.45 ? "#ffffff" : "#14313b"
+        });
+        etiquette.textContent = variable === "densite" ? fr(z.densite) : fr(z.effectif / 1000) + " k";
+        svgCarte.appendChild(etiquette);
+      });
+
+      // La légende : les valeurs réellement présentes dans chaque classe
+      legende.replaceChildren();
+      const effectifs = new Array(k).fill(0);
+      for (let c = k - 1; c >= 0; c--) {
+        const dedans = valeurs.filter(function (v, i) { return classes[i] === c; });
+        effectifs[c] = dedans.length;
+        const li = document.createElement("li");
+        const pastille = document.createElement("span");
+        pastille.className = "pastille-classe";
+        pastille.style.background = couleurs[c];
+        li.appendChild(pastille);
+        const t = document.createElement("span");
+        t.textContent = dedans.length === 0
+          ? "aucune zone"
+          : (Math.min.apply(null, dedans) === Math.max.apply(null, dedans)
+              ? fr(dedans[0])
+              : "de " + fr(Math.min.apply(null, dedans)) + " à " + fr(Math.max.apply(null, dedans))) +
+            " : " + dedans.length + (dedans.length > 1 ? " zones" : " zone");
+        li.appendChild(t);
+        legende.appendChild(li);
+      }
+
+      // La bande de points : chaque zone sur un axe, avec les seuils
+      svgBande.replaceChildren();
+      const min = Math.min.apply(null, valeurs), max = Math.max.apply(null, valeurs);
+      const x = function (v) { return 20 + (v - min) / (max - min) * 320; };
+      svgBande.appendChild(creer("line", { x1: 20, y1: 40, x2: 340, y2: 40, stroke: "#14313b", "stroke-width": 1.5 }));
+      for (let i = 1; i < k; i++) {
+        svgBande.appendChild(creer("line", { x1: x(bornes[i]), y1: 12, x2: x(bornes[i]), y2: 64, stroke: "#b3412e", "stroke-width": 1.5, "stroke-dasharray": "4 3" }));
+      }
+      valeurs.map(function (v, i) { return { v: v, i: i }; })
+        .sort(function (a, b) { return a.v - b.v; })
+        .forEach(function (p, rang) {
+          svgBande.appendChild(creer("circle", { cx: x(p.v), cy: 40 + ((rang % 3) - 1) * 11, r: 5, fill: couleurs[classes[p.i]], stroke: "#14313b", "stroke-width": 1 }));
+        });
+      const fMin = creer("text", { x: 20, y: 76, "font-size": 10, "font-family": "Bricolage Grotesque, system-ui, sans-serif", fill: "#4a6169" });
+      fMin.textContent = fr(min);
+      const fMax = creer("text", { x: 340, y: 76, "text-anchor": "end", "font-size": 10, "font-family": "Bricolage Grotesque, system-ui, sans-serif", fill: "#4a6169" });
+      fMax.textContent = fr(max);
+      svgBande.appendChild(fMin);
+      svgBande.appendChild(fMax);
+
+      // Le commentaire : ce que la carte raconte avec ces choix
+      let phrases = [];
+      if (variable === "effectif") {
+        phrases.push("Attention : le nombre d'habitants dépend de la taille de la zone. Les grandes zones ressortent même quand elles sont peu denses. Passez à la densité pour comparer les zones à armes égales.");
+      }
+      if (choixMethode.value === "egal") {
+        phrases.push("Intervalles égaux : la plage des valeurs est découpée en tranches de même largeur. " + effectifs[0] + " zones sur 12 tombent dans la première classe : quelques valeurs fortes écrasent le reste.");
+      } else if (choixMethode.value === "quantile") {
+        phrases.push("Quantiles : chaque classe contient à peu près le même nombre de zones (de " + Math.min.apply(null, effectifs) + " à " + Math.max.apply(null, effectifs) + "). La carte est équilibrée en couleurs, mais deux valeurs très éloignées peuvent partager une classe.");
+      } else {
+        phrases.push("Seuils naturels : les coupures tombent dans les grands écarts entre valeurs, pour que chaque classe soit homogène. Les très fortes valeurs sont isolées dans leur propre classe.");
+      }
+      if (choixPalette.value === "divergente") {
+        phrases.push("Palette divergente : elle suppose un point central significatif (une moyenne, zéro). Ici, rien ne le justifie, et les deux teintes suggèrent à tort deux familles opposées.");
+      } else if (choixPalette.value === "arcenciel") {
+        phrases.push("Arc-en-ciel : à éviter. Les teintes n'ont pas d'ordre naturel, le jaune et le vert vif attirent l'œil sans raison, et l'ordre se perd chez un daltonien (cochez la simulation).");
+      } else {
+        phrases.push("Palette séquentielle : du clair au foncé, c'est le bon choix pour une quantité qui va du faible au fort.");
+      }
+      texte.textContent = phrases.join(" ");
+    }
+
+    [choixVariable, choixMethode, choixPalette, caseDalto].forEach(function (e) { e.addEventListener("change", majAtelier); });
+    curseurClasses.addEventListener("input", majAtelier);
+    majAtelier();
+  </script>
+
+</body>
+</html>

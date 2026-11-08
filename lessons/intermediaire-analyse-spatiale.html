@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>L'analyse spatiale : Géo Nakama</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Literata:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="entete">
+    <div class="conteneur">
+      <a class="logo" href="../index.html">Géo Nakama</a>
+      <nav class="navigation" aria-label="Navigation principale">
+        <a href="../index.html#niveaux">Les niveaux</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="lecon">
+    <div class="conteneur">
+
+      <p class="fil"><a href="../index.html">Accueil</a> / Intermédiaire / L'analyse spatiale</p>
+
+      <p class="quiz-info" id="avis-niveau" hidden>
+        Ce module appartient au niveau Intermédiaire, qui s'ouvre après le quiz final du niveau Débutant.
+        Vous pouvez le lire, mais le parcours est pensé pour être suivi dans l'ordre :
+        <a href="debutant-quiz-final.html">voir le niveau Débutant</a>.
+      </p>
+
+      <div class="lecon-entete">
+        <h1>L'analyse spatiale</h1>
+        <p>Une carte ne fait pas que montrer : en combinant des couches, on lui pose des questions. À quelle distance ? Combien ? Où se recoupent-elles ?</p>
+      </div>
+
+      <section class="objectifs" aria-labelledby="objectifs-titre">
+        <h2 id="objectifs-titre">Objectifs de cette leçon</h2>
+        <ul>
+          <li>Décrire le tampon, l'intersection, l'union et le découpage.</li>
+          <li>Répondre à une question « à moins de X km de… » avec une zone tampon.</li>
+          <li>Expliquer pourquoi on analyse dans un système de coordonnées en mètres.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 1. Les opérations ===== -->
+      <section class="lecon-section" aria-labelledby="operations-titre">
+        <h2 id="operations-titre">Les opérations de base</h2>
+        <p>L'analyse spatiale consiste à <strong>produire de nouvelles informations à partir de couches existantes</strong>. Les outils s'appellent des <em>géotraitements</em>. Quatre reviennent sans cesse :</p>
+        <ul>
+          <li>le <strong>tampon</strong> (<em>buffer</em>) : une zone située à une distance donnée d'un objet ;</li>
+          <li>l'<strong>intersection</strong> : la partie commune à deux couches ;</li>
+          <li>l'<strong>union</strong> : une couche qui réunit deux couches en une seule ;</li>
+          <li>le <strong>découpage</strong> (<em>clip</em>) : une couche coupée selon le contour d'une autre.</li>
+        </ul>
+        <p>Le tableau en fin de leçon donne un exemple concret de chacune. Voyons d'abord le tampon et l'intersection à l'œuvre.</p>
+      </section>
+
+      <!-- ===== 2. Illustration interactive ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="demo-titre">
+        <h2 id="demo-titre">À vous de jouer : combien de centres près de la route ?</h2>
+        <p>C'est la carte fictive du module précédent, avec une route qui la traverse. Réglez le <strong>rayon du tampon</strong> : la zone bleue s'élargit autour de la route, et les centres qu'elle recouvre s'allument. Choisissez ensuite une région pour faire une <strong>intersection</strong> : seuls comptent les centres à la fois dans le tampon et dans cette région. Les données sont fictives.</p>
+
+        <div class="demo">
+          <div class="demo-controle" style="margin-top:0">
+            <label for="rayon">Rayon du tampon</label>
+            <input type="range" id="rayon" min="0" max="20" step="1" value="5" aria-describedby="tampon-texte">
+            <output id="rayon-valeur" for="rayon"></output>
+          </div>
+
+          <div class="requete" style="margin-top:1rem">
+            <div>
+              <label for="choix-region">Limiter à une région (intersection)</label>
+              <select id="choix-region">
+                <option value="">Aucune</option>
+                <option value="R1">Région R1</option>
+                <option value="R2">Région R2</option>
+                <option value="R3">Région R3</option>
+              </select>
+            </div>
+          </div>
+
+          <label class="case"><input type="checkbox" id="voir-distances"> Afficher la distance de chaque centre à la route</label>
+
+          <div style="max-width:40rem;margin:1rem auto 0">
+            <svg id="svg-tampon" viewBox="0 0 360 244" role="img" aria-label="Carte fictive avec une route, une zone tampon autour d'elle et douze centres de santé"
+                 style="display:block;width:100%;height:auto;border:1px solid var(--trait);background:#fff">
+              <defs>
+                <clipPath id="clip-region"><polygon id="clip-poly" points="0,0 0,0 0,0"/></clipPath>
+              </defs>
+              <g id="regions-tampon"></g>
+              <g id="groupe-tampon">
+                <polyline id="tampon-ligne" fill="none" stroke="#2a6f97" stroke-opacity="0.3" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+              <polyline id="route-ligne" fill="none" stroke="#14313b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <g id="points-tampon"></g>
+              <g>
+                <line x1="24" y1="233" x2="64" y2="233" stroke="#14313b" stroke-width="2.5"/>
+                <line x1="24" y1="229" x2="24" y2="237" stroke="#14313b" stroke-width="2"/>
+                <line x1="64" y1="229" x2="64" y2="237" stroke="#14313b" stroke-width="2"/>
+                <text x="70" y="237" font-family="Bricolage Grotesque, system-ui, sans-serif" font-size="10" fill="#14313b">10 km</text>
+              </g>
+            </svg>
+          </div>
+
+          <p class="legende-carte">
+            <span class="pastille-legende" style="background:#b3412e"></span> centre retenu
+            <span class="pastille-legende creux"></span> dans le tampon, mais hors de la région choisie
+            <span class="pastille-legende" style="background:#8a9a92"></span> centre trop loin
+          </p>
+
+          <p class="demo-message" id="tampon-texte" aria-live="polite" style="min-height:5em"></p>
+        </div>
+      </section>
+
+      <!-- ===== 3. Mesurer en mètres ===== -->
+      <section class="lecon-section" aria-labelledby="metres-titre">
+        <h2 id="metres-titre">Analyser en mètres, pas en degrés</h2>
+        <p>Un tampon, une distance ou une surface se calculent avec <strong>l'unité du système de coordonnées</strong> de la couche. Si la couche est en WGS 84 (EPSG:4326), l'unité est le degré. Si elle est en UTM (EPSG:32628 au Sénégal), c'est le mètre.</p>
+        <div class="piege">
+          <strong>Le tampon qui fait 555 km.</strong> Demandez un tampon de « 5 » autour d'une couche en degrés : vous obtenez 5 degrés, soit environ 555 km (1° vaut à peu près 111 km). Pour un tampon de 5 km, <em>reprojetez d'abord</em> la couche dans un système en mètres, puis saisissez 5 000.
+        </div>
+        <p>Rappelez-vous aussi du module sur les projections : aucune projection ne conserve tout. Sur un petit territoire comme un département, l'UTM donne des distances et des surfaces très proches de la réalité, ce qui la rend adaptée à l'analyse.</p>
+      </section>
+
+      <!-- ===== 4. Tableau ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="comparatif-titre">
+        <h2 id="comparatif-titre">Les quatre opérations en exemples</h2>
+        <p class="indice-defilement">Faites défiler le tableau vers la droite pour voir toutes les colonnes.</p>
+        <div class="tableau-defile" tabindex="0" role="region" aria-label="Tableau des opérations d'analyse spatiale, défilant horizontalement">
+          <table class="comparatif">
+            <caption>Les géotraitements de base</caption>
+            <thead>
+              <tr>
+                <th scope="col">Opération</th>
+                <th scope="col">Ce qu'elle produit</th>
+                <th scope="col">Exemple concret</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Tampon</th>
+                <td>Une zone à une distance donnée d'un objet</td>
+                <td>La bande de 5 km autour d'une route</td>
+              </tr>
+              <tr>
+                <th scope="row">Intersection</th>
+                <td>La partie commune à deux couches</td>
+                <td>Les zones inondables situées à l'intérieur d'une commune</td>
+              </tr>
+              <tr>
+                <th scope="row">Union</th>
+                <td>Une couche unique qui réunit deux couches</td>
+                <td>Réunir deux aires protégées voisines en une seule</td>
+              </tr>
+              <tr>
+                <th scope="row">Découpage (clip)</th>
+                <td>Une couche coupée selon le contour d'une autre</td>
+                <td>Extraire les routes d'une seule région</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===== 5. Enchaîner ===== -->
+      <section class="lecon-section" aria-labelledby="chaine-titre">
+        <h2 id="chaine-titre">Enchaîner les opérations</h2>
+        <p>Une vraie analyse combine plusieurs géotraitements, et <strong>leur ordre compte</strong>. Exemple : « combien de personnes vivent à moins de 5 km d'un centre de santé ? »</p>
+        <ol class="liste-elements">
+          <li><strong>Reprojeter</strong> les couches dans un système en mètres (UTM).</li>
+          <li>Faire un <strong>tampon de 5 000 m</strong> autour de chaque centre.</li>
+          <li><strong>Intersecter</strong> ces tampons avec la couche des villages ou des communes, qui porte la population.</li>
+          <li><strong>Additionner</strong> la population obtenue, grâce à la table d'attributs.</li>
+        </ol>
+        <p>Vous retrouvez ici les trois modules précédents : projection, table d'attributs et géotraitement.</p>
+
+        <h3>Le même calcul en SQL</h3>
+        <p>Dans une base spatiale comme PostGIS, le tampon se fait avec <code>ST_Buffer</code>. Pour « les centres situés à moins de 5 km d'une route », on utilise <code>ST_DWithin</code>, à condition que les géométries soient dans un système en mètres :</p>
+        <pre class="code-sql">SELECT c.nom
+FROM centres c, routes r
+WHERE ST_DWithin(c.geom, r.geom, 5000);</pre>
+      </section>
+
+      <!-- ===== 6. À retenir ===== -->
+      <section class="retenir" aria-labelledby="retenir-titre">
+        <h2 id="retenir-titre">À retenir</h2>
+        <ul>
+          <li>Le tampon crée une zone à distance fixe, l'intersection garde la partie commune, l'union réunit, le découpage coupe.</li>
+          <li>Les distances et les surfaces se calculent dans l'unité de la couche : reprojetez en mètres (UTM) avant d'analyser.</li>
+          <li>Une analyse enchaîne plusieurs opérations, et leur ordre compte.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 7. Quiz ===== -->
+      <section class="lecon-section" id="quiz" aria-labelledby="quiz-titre">
+        <h2 id="quiz-titre">Quiz du module</h2>
+        <p>Quatre questions pour vérifier que c'est bien clair. Il faut au moins 3 bonnes réponses pour valider le module.</p>
+        <div id="quiz-conteneur" class="quiz"></div>
+      </section>
+
+      <nav class="nav-modules" aria-label="Navigation entre les modules">
+        <a class="nav-precedent" href="intermediaire-bases-donnees-spatiales.html" rel="prev"><span class="nav-etiquette">Module précédent</span>Les bases de données spatiales</a>
+        <a class="nav-suivant" href="intermediaire-images-satellites.html" rel="next"><span class="nav-etiquette">Module suivant</span>Les images satellites</a>
+      </nav>
+
+    </div>
+  </main>
+
+  <footer class="pied">
+    <div class="conteneur">
+      <p>Géo Nakama : un projet pour apprendre la géomatique par l'image.</p>
+    </div>
+  </footer>
+
+  <script src="../js/progress.js"></script>
+  <script src="../js/quiz.js"></script>
+
+  <script>
+    if (!Progression.estValide("debutant-quiz-final")) {
+      document.getElementById("avis-niveau").hidden = false;
+    }
+  </script>
+
+  <!-- Les questions de CE module -->
+  <script>
+    creerQuiz(document.getElementById("quiz-conteneur"), {
+      id: "intermediaire-analyse-spatiale",
+      seuil: 3,
+      questions: [
+        {
+          enonce: "Quelle opération produit une zone située à une distance donnée d'un objet ?",
+          choix: ["L'intersection", "Le tampon (buffer)", "L'union", "Le découpage"],
+          bonne: 1,
+          explication: "Le tampon entoure un objet (un point, une ligne, un polygone) d'une zone de largeur fixe. C'est l'outil des questions « à moins de X km de… »."
+        },
+        {
+          enonce: "Que donne l'intersection de deux couches ?",
+          choix: [
+            "Les deux couches réunies en une seule",
+            "Une zone à distance fixe autour des objets",
+            "Une couche coupée par le contour d'une autre",
+            "La partie commune aux deux couches"
+          ],
+          bonne: 3,
+          explication: "L'intersection ne garde que ce qui appartient aux deux couches à la fois. Réunir deux couches, c'est l'union ; couper l'une avec l'autre, c'est le découpage."
+        },
+        {
+          enonce: "Vous voulez un tampon de 5 km autour de routes dont les coordonnées sont en degrés (WGS 84). Que faites-vous d'abord ?",
+          choix: [
+            "Je reprojette les routes dans un système en mètres (UTM), puis j'utilise un rayon de 5 000",
+            "Je tape 5 comme rayon : le logiciel convertira tout seul",
+            "Je convertis les routes en raster",
+            "J'utilise la projection de Mercator"
+          ],
+          bonne: 0,
+          explication: "Dans une couche en degrés, un rayon de 5 vaut 5 degrés, soit environ 555 km. Il faut d'abord reprojeter en mètres pour que 5 000 signifie 5 km."
+        },
+        {
+          enonce: "Comment savoir combien de centres de santé se trouvent à moins de 5 km d'une route ?",
+          choix: [
+            "Faire l'union des centres et des routes",
+            "Faire un découpage des routes",
+            "Tamponner les routes de 5 km, puis compter les centres qui tombent dedans",
+            "Mesurer quelques distances au hasard"
+          ],
+          bonne: 2,
+          explication: "On crée un tampon de 5 km autour des routes, puis on sélectionne les centres situés à l'intérieur. C'est exactement ce que fait la démonstration de cette leçon."
+        }
+      ]
+    });
+  </script>
+
+  <!-- Script de la démonstration : tampon réglable et intersection avec une région -->
+  <script>
+    const SVG_NS = "http://www.w3.org/2000/svg";
+    const KM_PAR_UNITE = 0.25;     // sur ce dessin, 1 unité vaut 0,25 km (donc 40 unités = 10 km)
+
+    // La route est une ligne brisée : une liste de points reliés
+    const ROUTE = [[28, 122], [110, 98], [185, 142], [260, 96], [338, 120]];
+
+    const REGIONS = [
+      { code: "R1", couleur: "#e3efe6", points: "20,30 130,25 115,218 25,220",   etiquette: [70, 38] },
+      { code: "R2", couleur: "#dde9f0", points: "130,25 240,22 230,217 115,218", etiquette: [180, 36] },
+      { code: "R3", couleur: "#f1ebd9", points: "240,22 340,20 345,215 230,217", etiquette: [290, 36] }
+    ];
+
+    // Les mêmes douze centres que dans le module précédent (positions du dessin)
+    const CENTRES = [
+      { id: 1,  region: "R1", x: 60,  y: 70  }, { id: 2,  region: "R1", x: 95,  y: 150 },
+      { id: 3,  region: "R1", x: 50,  y: 190 }, { id: 4,  region: "R2", x: 150, y: 60  },
+      { id: 5,  region: "R2", x: 185, y: 110 }, { id: 6,  region: "R2", x: 170, y: 170 },
+      { id: 7,  region: "R2", x: 215, y: 70  }, { id: 8,  region: "R3", x: 265, y: 50  },
+      { id: 9,  region: "R3", x: 300, y: 100 }, { id: 10, region: "R3", x: 280, y: 170 },
+      { id: 11, region: "R3", x: 308, y: 195 }, { id: 12, region: "R1", x: 92,  y: 95  }
+    ];
+
+    // Distance d'un point à un segment [A, B] : on cherche le point du segment le plus proche
+    function distanceSegment(px, py, ax, ay, bx, by) {
+      const dx = bx - ax, dy = by - ay;
+      const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / (dx * dx + dy * dy)));
+      return Math.hypot(px - (ax + t * dx), py - (ay + t * dy));
+    }
+
+    // Distance d'un point à la route entière = la plus petite distance à l'un de ses segments
+    function distanceRouteKm(c) {
+      let mini = Infinity;
+      for (let i = 0; i < ROUTE.length - 1; i++) {
+        const d = distanceSegment(c.x, c.y, ROUTE[i][0], ROUTE[i][1], ROUTE[i + 1][0], ROUTE[i + 1][1]);
+        if (d < mini) mini = d;
+      }
+      return mini * KM_PAR_UNITE;
+    }
+    CENTRES.forEach(function (c) { c.distKm = distanceRouteKm(c); });
+
+    function creer(nom, attributs) {
+      const e = document.createElementNS(SVG_NS, nom);
+      Object.keys(attributs).forEach(function (k) { e.setAttribute(k, attributs[k]); });
+      return e;
+    }
+
+    // ---------- Dessin fixe : régions, route ----------
+    const groupeRegions = document.getElementById("regions-tampon");
+    const polygonesRegions = {};
+    REGIONS.forEach(function (r) {
+      const poly = creer("polygon", { points: r.points, fill: r.couleur, stroke: "#14313b", "stroke-width": 1.2, "stroke-linejoin": "round" });
+      groupeRegions.appendChild(poly);
+      polygonesRegions[r.code] = poly;
+      const t = creer("text", { x: r.etiquette[0], y: r.etiquette[1], "text-anchor": "middle", "font-family": "Bricolage Grotesque, system-ui, sans-serif", "font-size": 13, "font-weight": 700, fill: "#14313b", "fill-opacity": 0.5 });
+      t.textContent = r.code;
+      groupeRegions.appendChild(t);
+    });
+
+    const pointsRoute = ROUTE.map(function (p) { return p[0] + "," + p[1]; }).join(" ");
+    document.getElementById("route-ligne").setAttribute("points", pointsRoute);
+    document.getElementById("tampon-ligne").setAttribute("points", pointsRoute);
+
+    // ---------- Les centres ----------
+    const groupePoints = document.getElementById("points-tampon");
+    const cercles = {}, etiquettes = {};
+    CENTRES.forEach(function (c) {
+      cercles[c.id] = creer("circle", { cx: c.x, cy: c.y, r: 5, fill: "#8a9a92", stroke: "#ffffff", "stroke-width": 1.5 });
+      etiquettes[c.id] = creer("text", { x: c.x + 11, y: c.y + 3.5, "font-family": "Bricolage Grotesque, system-ui, sans-serif", "font-size": 9.5, fill: "#14313b" });
+      groupePoints.appendChild(cercles[c.id]);
+      groupePoints.appendChild(etiquettes[c.id]);
+    });
+
+    // ---------- Les commandes ----------
+    const curseur = document.getElementById("rayon");
+    const valeurRayon = document.getElementById("rayon-valeur");
+    const choixRegion = document.getElementById("choix-region");
+    const caseDistances = document.getElementById("voir-distances");
+    const texte = document.getElementById("tampon-texte");
+    const tampon = document.getElementById("tampon-ligne");
+    const groupeTampon = document.getElementById("groupe-tampon");
+    const clipPoly = document.getElementById("clip-poly");
+
+    function enKm(valeur) { return valeur.toLocaleString("fr-FR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }); }
+
+    function mettreAJour() {
+      const rayon = Number(curseur.value);          // en km
+      const region = choixRegion.value;             // "" ou "R1", "R2", "R3"
+      valeurRayon.textContent = rayon + " km";
+
+      // Le tampon : une ligne très épaisse aux bouts arrondis, dont la demi-largeur vaut le rayon
+      tampon.setAttribute("stroke-width", (2 * rayon / KM_PAR_UNITE).toFixed(1));
+      tampon.setAttribute("visibility", rayon === 0 ? "hidden" : "visible");
+
+      // L'intersection : on ne garde du tampon que la partie située dans la région choisie
+      if (region) {
+        const r = REGIONS.find(function (x) { return x.code === region; });
+        clipPoly.setAttribute("points", r.points);
+        groupeTampon.setAttribute("clip-path", "url(#clip-region)");
+      } else {
+        groupeTampon.removeAttribute("clip-path");
+      }
+      REGIONS.forEach(function (r) {
+        polygonesRegions[r.code].setAttribute("fill-opacity", (!region || r.code === region) ? 1 : 0.4);
+        polygonesRegions[r.code].setAttribute("stroke-width", r.code === region ? 2.5 : 1.2);
+      });
+
+      // Les centres : retenus, dans le tampon mais hors région, ou trop loin
+      let retenus = 0, horsRegion = 0;
+      CENTRES.forEach(function (c) {
+        const dansTampon = rayon > 0 && c.distKm <= rayon;
+        const dansRegion = !region || c.region === region;
+        const cercle = cercles[c.id];
+        if (dansTampon && dansRegion) {
+          retenus++;
+          cercle.setAttribute("r", 8); cercle.setAttribute("fill", "#b3412e"); cercle.setAttribute("stroke", "#ffffff"); cercle.setAttribute("stroke-width", 1.5);
+        } else if (dansTampon) {
+          horsRegion++;
+          cercle.setAttribute("r", 7); cercle.setAttribute("fill", "#ffffff"); cercle.setAttribute("stroke", "#b3412e"); cercle.setAttribute("stroke-width", 2);
+        } else {
+          cercle.setAttribute("r", 5); cercle.setAttribute("fill", "#8a9a92"); cercle.setAttribute("stroke", "#ffffff"); cercle.setAttribute("stroke-width", 1.5);
+        }
+        etiquettes[c.id].textContent = caseDistances.checked ? enKm(c.distKm) + " km" : c.id;
+      });
+
+      // La phrase de lecture
+      let phrase;
+      if (rayon === 0) {
+        phrase = "Rayon nul : le tampon est réduit à la route. Aucun centre n'est dessus.";
+      } else if (!region) {
+        phrase = retenus + (retenus > 1 ? " centres sont" : " centre est") + " à moins de " + rayon + " km de la route, sur 12 au total.";
+      } else {
+        phrase = retenus + (retenus > 1 ? " centres sont" : " centre est") + " à la fois à moins de " + rayon + " km de la route et dans la région " + region +
+                 " : c'est l'intersection du tampon et de la région. " + horsRegion + (horsRegion > 1 ? " autres centres sont" : " autre centre est") +
+                 " dans le tampon mais hors de la région.";
+      }
+      texte.textContent = phrase;
+    }
+
+    curseur.addEventListener("input", mettreAJour);
+    choixRegion.addEventListener("change", mettreAJour);
+    caseDistances.addEventListener("change", mettreAJour);
+    mettreAJour();
+  </script>
+
+</body>
+</html>

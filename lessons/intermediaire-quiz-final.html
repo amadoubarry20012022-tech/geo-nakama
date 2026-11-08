@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Quiz final du niveau Intermédiaire : Géo Nakama</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Literata:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="entete">
+    <div class="conteneur">
+      <a class="logo" href="../index.html">Géo Nakama</a>
+      <nav class="navigation" aria-label="Navigation principale">
+        <a href="../index.html#niveaux">Les niveaux</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="lecon">
+    <div class="conteneur">
+
+      <p class="fil"><a href="../index.html">Accueil</a> / Intermédiaire / Quiz final</p>
+
+      <p class="quiz-info" id="avis-niveau" hidden>
+        Ce quiz appartient au niveau Intermédiaire, qui s'ouvre après le quiz final du niveau Débutant.
+        <a href="debutant-quiz-final.html">Voir le niveau Débutant</a>.
+      </p>
+
+      <div class="lecon-entete">
+        <h1>Quiz final du niveau Intermédiaire</h1>
+        <p>Huit questions qui reprennent tout le niveau. Avec 6 bonnes réponses ou plus, le niveau Avancé s'ouvre.</p>
+      </div>
+
+      <!-- ===== État des modules ===== -->
+      <section class="lecon-section" aria-labelledby="etat-titre">
+        <h2 id="etat-titre">Vos modules</h2>
+        <ol class="liste-elements" id="liste-modules"></ol>
+        <p id="etat-message" aria-live="polite"></p>
+      </section>
+
+      <!-- ===== Le quiz (affiché seulement si les 6 modules sont validés) ===== -->
+      <section class="lecon-section" id="quiz" aria-labelledby="quiz-titre" hidden>
+        <h2 id="quiz-titre">Les questions</h2>
+        <div id="quiz-conteneur" class="quiz"></div>
+      </section>
+
+      <nav class="nav-modules" aria-label="Navigation entre les modules">
+        <a class="nav-precedent" href="intermediaire-cartographie.html" rel="prev"><span class="nav-etiquette">Module précédent</span>Cartographier proprement</a>
+        <a class="nav-suivant" href="../index.html#niveaux" rel="next"><span class="nav-etiquette">Et ensuite ?</span>Retour aux niveaux</a>
+      </nav>
+
+    </div>
+  </main>
+
+  <footer class="pied">
+    <div class="conteneur">
+      <p>Géo Nakama : un projet pour apprendre la géomatique par l'image.</p>
+    </div>
+  </footer>
+
+  <script src="../js/progress.js"></script>
+  <script src="../js/quiz.js"></script>
+
+  <script>
+    if (!Progression.estValide("debutant-quiz-final")) {
+      document.getElementById("avis-niveau").hidden = false;
+    }
+
+    // Les 6 modules du niveau, avec leur identifiant (le même que dans chaque leçon)
+    const MODULES = [
+      { id: "intermediaire-projections",                titre: "Les projections en détail",       page: "intermediaire-projections.html" },
+      { id: "intermediaire-bases-de-donnees-spatiales", titre: "Les bases de données spatiales",  page: "intermediaire-bases-donnees-spatiales.html" },
+      { id: "intermediaire-analyse-spatiale",           titre: "L'analyse spatiale",              page: "intermediaire-analyse-spatiale.html" },
+      { id: "intermediaire-images-satellites",          titre: "Les images satellites",           page: "intermediaire-images-satellites.html" },
+      { id: "intermediaire-compositions-ndvi",          titre: "Compositions colorées et NDVI",   page: "intermediaire-ndvi.html" },
+      { id: "intermediaire-cartographier-proprement",   titre: "Cartographier proprement",        page: "intermediaire-cartographie.html" }
+    ];
+
+    const liste = document.getElementById("liste-modules");
+    const message = document.getElementById("etat-message");
+    const sectionQuiz = document.getElementById("quiz");
+
+    // 1. On affiche chaque module avec son état (validé ou à faire)
+    let manquants = 0;
+    MODULES.forEach(function (m) {
+      const li = document.createElement("li");
+      const lien = document.createElement("a");
+      lien.href = m.page;
+      lien.textContent = m.titre;
+      li.appendChild(lien);
+
+      const etat = document.createElement("span");
+      if (Progression.estValide(m.id)) {
+        etat.className = "coche";
+        etat.textContent = " ✓ validé";
+      } else {
+        etat.textContent = " : à valider";
+        manquants++;
+      }
+      li.appendChild(etat);
+      liste.appendChild(li);
+    });
+
+    // 2. Soit on ouvre le quiz, soit on explique ce qu'il reste à faire
+    if (manquants > 0) {
+      message.textContent = "Il vous reste " + manquants + (manquants > 1 ? " modules" : " module") +
+                            " à valider avant de passer le quiz final. Cliquez sur un module de la liste pour le reprendre.";
+    } else {
+      message.textContent = Progression.estValide("intermediaire-quiz-final")
+        ? "Les 6 modules sont validés et le quiz final est réussi : le niveau Avancé est débloqué. Vous pouvez refaire le quiz pour vous entraîner."
+        : "Les 6 modules sont validés : vous pouvez passer le quiz final.";
+      sectionQuiz.hidden = false;
+    }
+  </script>
+
+  <!-- Les 8 questions du quiz final : 6 bonnes réponses pour réussir (au moins une question par module) -->
+  <script>
+    if (!document.getElementById("quiz").hidden) {
+      creerQuiz(document.getElementById("quiz-conteneur"), {
+        id: "intermediaire-quiz-final",
+        nom: "Niveau Intermédiaire",
+        seuil: 6,
+        messageReussite: "Bravo, niveau Intermédiaire validé ! Le niveau Avancé est maintenant débloqué.",
+        messageEchec: "Il faut au moins 6 bonnes réponses sur 8 pour valider le niveau. Revoyez les modules qui vous ont posé problème, puis réessayez.",
+        lienReussite: { texte: "Retour à l'accueil pour voir le niveau Avancé", href: "../index.html#niveaux" },
+        questions: [
+          {
+            enonce: "Vous voulez comparer les surfaces de plusieurs régions sur une carte du monde. Quelle famille de projection choisir ?",
+            choix: [
+              "Une projection conforme, comme Mercator",
+              "Une projection équivalente, comme la sinusoïdale",
+              "Une projection qui ne déforme rien",
+              "Peu importe : toutes se valent"
+            ],
+            bonne: 1,
+            explication: "Une projection équivalente conserve les surfaces, ce qui permet de les comparer. Mercator conserve les angles mais exagère les surfaces vers les pôles, et aucune projection ne conserve tout."
+          },
+          {
+            enonce: "Dans une table « centres », quelle requête sélectionne les hôpitaux de plus de 100 lits ?",
+            choix: [
+              "SELECT * FROM lits WHERE hôpital > 100;",
+              "SELECT lits FROM type WHERE centres = 100;",
+              "SELECT * FROM centres WHERE type = 'hôpital' AND lits > 100;",
+              "SELECT * FROM centres WHERE type > 'hôpital' OR lits = 100;"
+            ],
+            bonne: 2,
+            explication: "On sélectionne dans la table « centres » (FROM), avec deux conditions qui doivent être vraies ensemble (AND) : le type vaut « hôpital » et les lits dépassent 100."
+          },
+          {
+            enonce: "Vous faites un tampon de 2 km autour d'un fleuve, puis une intersection avec une commune. Que obtenez-vous ?",
+            choix: [
+              "La commune privée de la zone proche du fleuve",
+              "L'union du fleuve et de la commune",
+              "Un raster à une seule bande",
+              "La zone située à moins de 2 km du fleuve, limitée à cette commune"
+            ],
+            bonne: 3,
+            explication: "Le tampon crée la zone à moins de 2 km du fleuve, et l'intersection ne garde que la partie qui se trouve aussi dans la commune."
+          },
+          {
+            enonce: "Pourquoi reprojeter une couche en UTM avant de calculer une distance ou une surface ?",
+            choix: [
+              "Pour que l'unité soit le mètre et non le degré",
+              "Pour que la couche devienne un raster",
+              "Pour supprimer la table d'attributs",
+              "Pour réduire la taille du fichier"
+            ],
+            bonne: 0,
+            explication: "Un degré n'a pas la même longueur partout. En UTM, les coordonnées sont en mètres, donc un rayon de 5 000 vaut bien 5 km."
+          },
+          {
+            enonce: "Un satellite repasse tous les 5 jours avec des pixels de 10 m ; un autre, tous les 16 jours avec des pixels de 30 m. Quelles résolutions comparez-vous ?",
+            choix: [
+              "Spectrale et radiométrique",
+              "Spatiale et temporelle",
+              "Spatiale et radiométrique",
+              "Uniquement la résolution spectrale"
+            ],
+            bonne: 1,
+            explication: "La taille du pixel est la résolution spatiale, et le délai entre deux passages est la résolution temporelle."
+          },
+          {
+            enonce: "Un pixel a une réflectance de 0,40 en proche infrarouge et de 0,10 en rouge. Quel est son NDVI ?",
+            choix: ["0,30", "0,80", "0,60", "−0,60"],
+            bonne: 2,
+            explication: "NDVI = (PIR − Rouge) / (PIR + Rouge) = (0,40 − 0,10) / (0,40 + 0,10) = 0,30 / 0,50 = 0,60. La valeur 0,30 oublie de diviser par la somme."
+          },
+          {
+            enonce: "Sur une image en fausses couleurs infrarouge, une zone apparaît rouge vif. De quoi s'agit-il probablement ?",
+            choix: [
+              "D'une surface d'eau",
+              "D'une route goudronnée",
+              "D'un nuage",
+              "D'une végétation en bonne santé"
+            ],
+            bonne: 3,
+            explication: "Le proche infrarouge, très brillant pour la végétation, est envoyé sur le canal rouge de l'écran. L'eau, elle, apparaît sombre."
+          },
+          {
+            enonce: "Pourquoi éviter une palette arc-en-ciel pour représenter une quantité ?",
+            choix: [
+              "Parce qu'elle consomme trop de mémoire",
+              "Parce que les teintes n'ont pas d'ordre naturel, et que l'ordre se perd pour certains daltoniens",
+              "Parce qu'elle est interdite en cartographie",
+              "Parce qu'elle ne s'imprime jamais"
+            ],
+            bonne: 1,
+            explication: "Rien n'indique quelle teinte vaut « plus » qu'une autre, et le rouge, le vert et le jaune se confondent facilement. Une palette séquentielle, du clair au foncé, se lit sans ambiguïté."
+          }
+        ]
+      });
+    }
+  </script>
+
+</body>
+</html>

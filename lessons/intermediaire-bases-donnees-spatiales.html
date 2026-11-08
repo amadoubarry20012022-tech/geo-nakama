@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Les bases de données spatiales : Géo Nakama</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Literata:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="entete">
+    <div class="conteneur">
+      <a class="logo" href="../index.html">Géo Nakama</a>
+      <nav class="navigation" aria-label="Navigation principale">
+        <a href="../index.html#niveaux">Les niveaux</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="lecon">
+    <div class="conteneur">
+
+      <p class="fil"><a href="../index.html">Accueil</a> / Intermédiaire / Les bases de données spatiales</p>
+
+      <p class="quiz-info" id="avis-niveau" hidden>
+        Ce module appartient au niveau Intermédiaire, qui s'ouvre après le quiz final du niveau Débutant.
+        Vous pouvez le lire, mais le parcours est pensé pour être suivi dans l'ordre :
+        <a href="debutant-quiz-final.html">voir le niveau Débutant</a>.
+      </p>
+
+      <div class="lecon-entete">
+        <h1>Les bases de données spatiales</h1>
+        <p>Derrière chaque carte se cache une table. Savoir l'interroger et la relier à d'autres tables est la clé de toute analyse en SIG.</p>
+      </div>
+
+      <section class="objectifs" aria-labelledby="objectifs-titre">
+        <h2 id="objectifs-titre">Objectifs de cette leçon</h2>
+        <ul>
+          <li>Expliquer qu'une donnée spatiale associe une géométrie à des attributs.</li>
+          <li>Lire une table d'attributs et formuler une requête de sélection.</li>
+          <li>Comprendre une jointure, et la différence avec une jointure spatiale.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 1. Géométrie + attributs ===== -->
+      <section class="lecon-section" aria-labelledby="principe-titre">
+        <h2 id="principe-titre">Une géométrie et des attributs</h2>
+        <p>Dans un SIG, chaque objet de la carte possède deux sortes d'informations :</p>
+        <ul>
+          <li>sa <strong>géométrie</strong> : où il se trouve et quelle forme il a (point, ligne, polygone) ;</li>
+          <li>ses <strong>attributs</strong> : ce qu'il est (un nom, un type, un nombre de lits, une date…).</li>
+        </ul>
+        <p>Les attributs forment une <strong>table</strong> : <strong>une ligne par objet</strong>, <strong>une colonne par caractéristique</strong>. Chaque ligne est reliée à sa géométrie par un <strong>identifiant</strong> unique. Cliquer sur un objet de la carte revient donc à lire une ligne de la table, et inversement.</p>
+        <p>Chaque colonne a un <strong>type</strong> : texte, nombre entier, nombre décimal, date, oui/non. Ce type compte, car on ne compare pas du texte comme on compare des nombres. Cette table est stockée avec la géométrie dans un fichier (shapefile, GeoPackage) ou dans une base de données spatiale comme <strong>PostGIS</strong>.</p>
+      </section>
+
+      <!-- ===== 2. Illustration : carte + table + requête ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="requete-titre">
+        <h2 id="requete-titre">À vous de jouer : interroger la table</h2>
+        <p>Voici douze centres de santé et leur table. <strong>Les données sont fictives</strong>, inventées pour l'exercice. Construisez une requête avec les trois menus : les lignes qui répondent s'allument dans la table, et les points correspondants grossissent sur la carte. Cliquez sur un nom dans la table, ou sur un point de la carte, pour relier l'un à l'autre.</p>
+
+        <div class="demo">
+          <div class="requete">
+            <div>
+              <label for="req-champ">Colonne</label>
+              <select id="req-champ">
+                <option value="lits" selected>lits</option>
+                <option value="type">type</option>
+                <option value="region">région</option>
+                <option value="h24">ouvert 24 h/24</option>
+              </select>
+            </div>
+            <div>
+              <label for="req-op">Opérateur</label>
+              <select id="req-op"></select>
+            </div>
+            <div>
+              <label for="req-valeur">Valeur</label>
+              <select id="req-valeur" hidden></select>
+              <input type="number" id="req-nombre" min="0" max="200" step="5" value="50">
+            </div>
+          </div>
+
+          <pre class="code-sql" id="req-sql" aria-label="La requête équivalente en SQL"></pre>
+          <p class="demo-message" id="req-resultat" aria-live="polite" style="min-height:0;margin-top:0.5rem"></p>
+
+          <div class="demo-panneaux" style="margin-top:1rem">
+            <figure class="panneau" style="margin:0">
+              <figcaption>La carte (fictive)</figcaption>
+              <svg id="svg-centres" viewBox="0 0 360 240" role="group" aria-label="Carte fictive de douze centres de santé répartis dans trois régions">
+                <g id="regions-carte"></g>
+                <circle id="anneau" r="11" fill="none" stroke="#14313b" stroke-width="2" stroke-dasharray="4 3" visibility="hidden"/>
+                <g id="points-carte"></g>
+              </svg>
+            </figure>
+
+            <div>
+              <p class="indice-defilement">Faites défiler le tableau vers la droite pour voir toutes les colonnes.</p>
+              <div class="tableau-defile" tabindex="0" role="region" aria-label="Table d'attributs des centres, défilante horizontalement">
+                <table class="comparatif">
+                  <caption>Table « centres »</caption>
+                  <thead>
+                    <tr>
+                      <th scope="col">id</th>
+                      <th scope="col">nom</th>
+                      <th scope="col">type</th>
+                      <th scope="col">lits</th>
+                      <th scope="col">région</th>
+                      <th scope="col">24 h/24</th>
+                    </tr>
+                  </thead>
+                  <tbody id="corps-centres"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <p class="demo-message" id="selection-texte" aria-live="polite" style="min-height:3em"></p>
+        </div>
+      </section>
+
+      <!-- ===== 3. SQL ===== -->
+      <section class="lecon-section" aria-labelledby="sql-titre">
+        <h2 id="sql-titre">Parler à la base : le SQL</h2>
+        <p>La ligne sombre sous vos menus est une requête <strong>SQL</strong>, le langage des bases de données. Elle se lit presque comme une phrase :</p>
+        <pre class="code-sql">SELECT * FROM centres WHERE lits &gt; 50;</pre>
+        <p>« Sélectionner toutes les colonnes de la table <em>centres</em>, là où le nombre de lits dépasse 50. » On peut combiner plusieurs conditions avec <code>AND</code> (les deux vraies) ou <code>OR</code> (l'une ou l'autre).</p>
+        <p>Dans une base spatiale comme PostGIS, SQL gagne des fonctions qui comprennent la géométrie : par exemple, <code>ST_DWithin</code> sélectionne les objets situés à moins d'une certaine distance d'un autre. C'est ce qu'on appelle une <strong>requête spatiale</strong>.</p>
+      </section>
+
+      <!-- ===== 4. Jointure ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="jointure-titre">
+        <h2 id="jointure-titre">Relier deux tables : la jointure</h2>
+        <p>Les données sont souvent réparties dans plusieurs tables. Ici, la table des centres ne dit rien de la population de leur région, qui se trouve dans une autre table. Pour les réunir, on fait une <strong>jointure</strong> : on relie les lignes qui partagent la même valeur dans une <strong>colonne commune</strong>, ici le code de région.</p>
+
+        <div class="demo">
+          <div class="demo-panneaux">
+            <div>
+              <div class="tableau-defile">
+                <table class="comparatif">
+                  <caption>Table « centres » (extrait)</caption>
+                  <thead><tr><th scope="col">nom</th><th scope="col">région</th></tr></thead>
+                  <tbody id="join-a"></tbody>
+                </table>
+              </div>
+            </div>
+            <div>
+              <div class="tableau-defile">
+                <table class="comparatif">
+                  <caption>Table « regions »</caption>
+                  <thead><tr><th scope="col">code</th><th scope="col">nom_region</th><th scope="col">population</th></tr></thead>
+                  <tbody id="join-b"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <p style="margin:1rem 0 0.5rem"><button type="button" class="bouton" id="bouton-jointure" aria-expanded="false" aria-controls="join-resultat" style="border:0;font-size:1rem;cursor:pointer">Faire la jointure</button></p>
+
+          <div id="join-resultat" hidden>
+            <pre class="code-sql">SELECT c.nom, c.region, r.nom_region, r.population
+FROM centres c
+JOIN regions r ON c.region = r.code;</pre>
+            <div class="tableau-defile">
+              <table class="comparatif">
+                <caption>Résultat de la jointure</caption>
+                <thead>
+                  <tr><th scope="col">nom</th><th scope="col">région</th><th scope="col">nom_region</th><th scope="col">population</th></tr>
+                </thead>
+                <tbody id="join-c"></tbody>
+              </table>
+            </div>
+            <p class="demo-message" style="min-height:0">Chaque centre a récupéré les informations de sa région. La population est une donnée fictive.</p>
+          </div>
+        </div>
+
+        <div class="piege">
+          <strong>Jointure attributaire ou jointure spatiale ?</strong> Celle-ci s'appuie sur une <em>colonne commune</em>. Une <strong>jointure spatiale</strong> relie au contraire les objets d'après leur <em>position</em> : par exemple, associer à chaque centre la région dans laquelle il se trouve, même sans code commun. Elle utilise la géométrie, pas un identifiant.
+        </div>
+      </section>
+
+      <!-- ===== 5. À retenir ===== -->
+      <section class="retenir" aria-labelledby="retenir-titre">
+        <h2 id="retenir-titre">À retenir</h2>
+        <ul>
+          <li>Un objet spatial = une géométrie + une ligne de la table d'attributs, reliées par un identifiant.</li>
+          <li>Une requête filtre les lignes d'après une colonne, un opérateur et une valeur : en SQL, <code>SELECT … WHERE …</code>.</li>
+          <li>Une jointure relie deux tables par une colonne commune ; une jointure spatiale les relie par la position.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 6. Quiz ===== -->
+      <section class="lecon-section" id="quiz" aria-labelledby="quiz-titre">
+        <h2 id="quiz-titre">Quiz du module</h2>
+        <p>Quatre questions pour vérifier que c'est bien clair. Il faut au moins 3 bonnes réponses pour valider le module.</p>
+        <div id="quiz-conteneur" class="quiz"></div>
+      </section>
+
+      <nav class="nav-modules" aria-label="Navigation entre les modules">
+        <a class="nav-precedent" href="intermediaire-projections.html" rel="prev"><span class="nav-etiquette">Module précédent</span>Les projections en détail</a>
+        <a class="nav-suivant" href="intermediaire-analyse-spatiale.html" rel="next"><span class="nav-etiquette">Module suivant</span>L'analyse spatiale</a>
+      </nav>
+
+    </div>
+  </main>
+
+  <footer class="pied">
+    <div class="conteneur">
+      <p>Géo Nakama : un projet pour apprendre la géomatique par l'image.</p>
+    </div>
+  </footer>
+
+  <script src="../js/progress.js"></script>
+  <script src="../js/quiz.js"></script>
+
+  <script>
+    if (!Progression.estValide("debutant-quiz-final")) {
+      document.getElementById("avis-niveau").hidden = false;
+    }
+  </script>
+
+  <!-- Les questions de CE module -->
+  <script>
+    creerQuiz(document.getElementById("quiz-conteneur"), {
+      id: "intermediaire-bases-de-donnees-spatiales",
+      seuil: 3,
+      questions: [
+        {
+          enonce: "Que contient la table d'attributs d'une couche ?",
+          choix: [
+            "La forme et la position de chaque objet",
+            "Les informations descriptives de chaque objet : type, nom, nombre de lits…",
+            "Uniquement les coordonnées GPS",
+            "L'échelle de la carte"
+          ],
+          bonne: 1,
+          explication: "La géométrie dit où est l'objet et quelle forme il a. La table d'attributs dit ce qu'il est. Chaque ligne est reliée à sa géométrie par un identifiant."
+        },
+        {
+          enonce: "Quelle condition sélectionne les centres de plus de 50 lits ?",
+          choix: ["lits < 50", "lits = 50", "lits > 50", "type > 50"],
+          bonne: 2,
+          explication: "« Plus de 50 » s'écrit lits > 50. En SQL complet : SELECT * FROM centres WHERE lits > 50;"
+        },
+        {
+          enonce: "Que faut-il pour faire une jointure attributaire entre deux tables ?",
+          choix: [
+            "Que les deux tables aient le même nombre de lignes",
+            "Que les deux tables soient dans la même projection",
+            "Que les deux tables soient très petites",
+            "Une colonne commune qui identifie les mêmes objets, comme un code de région"
+          ],
+          bonne: 3,
+          explication: "La jointure relie les lignes qui ont la même valeur dans la colonne commune. Sans elle, on ne sait pas quelle ligne de l'une correspond à quelle ligne de l'autre."
+        },
+        {
+          enonce: "En quoi une jointure spatiale diffère-t-elle d'une jointure attributaire ?",
+          choix: [
+            "Elle relie les objets d'après leur position, sans colonne commune",
+            "Elle ne fonctionne qu'avec des rasters",
+            "Elle remplace la géométrie par une couleur",
+            "Elle supprime la table d'attributs"
+          ],
+          bonne: 0,
+          explication: "Une jointure spatiale s'appuie sur la géométrie : par exemple, associer chaque centre à la région dans laquelle il se trouve."
+        }
+      ]
+    });
+  </script>
+
+  <!-- Script des démonstrations : la requête et la jointure -->
+  <script>
+    const SVG_NS = "http://www.w3.org/2000/svg";
+
+    // ---------- Les données (fictives) ----------
+    const CENTRES = [
+      { id: 1,  nom: "Poste du Baobab",       type: "poste",   lits: 2,   region: "R1", h24: "non", x: 60,  y: 70  },
+      { id: 2,  nom: "Poste du Fromager",     type: "poste",   lits: 3,   region: "R1", h24: "non", x: 95,  y: 150 },
+      { id: 3,  nom: "Centre du Rônier",      type: "centre",  lits: 18,  region: "R1", h24: "oui", x: 50,  y: 190 },
+      { id: 4,  nom: "Poste du Karité",       type: "poste",   lits: 1,   region: "R2", h24: "non", x: 150, y: 60  },
+      { id: 5,  nom: "Centre du Tamarinier",  type: "centre",  lits: 24,  region: "R2", h24: "oui", x: 185, y: 110 },
+      { id: 6,  nom: "Hôpital du Manguier",   type: "hôpital", lits: 120, region: "R2", h24: "oui", x: 170, y: 170 },
+      { id: 7,  nom: "Poste du Kapokier",     type: "poste",   lits: 2,   region: "R2", h24: "non", x: 215, y: 70  },
+      { id: 8,  nom: "Centre du Détarium",    type: "centre",  lits: 15,  region: "R3", h24: "non", x: 265, y: 50  },
+      { id: 9,  nom: "Poste du Jujubier",     type: "poste",   lits: 3,   region: "R3", h24: "non", x: 300, y: 100 },
+      { id: 10, nom: "Hôpital du Cailcédrat", type: "hôpital", lits: 85,  region: "R3", h24: "oui", x: 280, y: 170 },
+      { id: 11, nom: "Poste du Neem",         type: "poste",   lits: 2,   region: "R3", h24: "non", x: 308, y: 195 },
+      { id: 12, nom: "Centre de l'Acacia",    type: "centre",  lits: 20,  region: "R1", h24: "oui", x: 92,  y: 95  }
+    ];
+
+    const REGIONS = [
+      { code: "R1", nom: "Région Nord",    population: 180000, couleur: "#e3efe6", points: "20,30 130,25 115,218 25,220",  etiquette: [70, 38]  },
+      { code: "R2", nom: "Région Centre",  population: 260000, couleur: "#dde9f0", points: "130,25 240,22 230,217 115,218", etiquette: [180, 36] },
+      { code: "R3", nom: "Région Sud",     population: 150000, couleur: "#f1ebd9", points: "240,22 340,20 345,215 230,217", etiquette: [290, 36] }
+    ];
+
+    function creer(nom, attributs) {
+      const e = document.createElementNS(SVG_NS, nom);
+      Object.keys(attributs).forEach(function (k) { e.setAttribute(k, attributs[k]); });
+      return e;
+    }
+
+    // ---------- La carte ----------
+    const groupeRegions = document.getElementById("regions-carte");
+    REGIONS.forEach(function (r) {
+      groupeRegions.appendChild(creer("polygon", { points: r.points, fill: r.couleur, stroke: "#14313b", "stroke-width": 1.2, "stroke-linejoin": "round" }));
+      const t = creer("text", { x: r.etiquette[0], y: r.etiquette[1], "text-anchor": "middle", "font-family": "Bricolage Grotesque, system-ui, sans-serif", "font-size": 13, "font-weight": 700, fill: "#14313b", "fill-opacity": 0.55 });
+      t.textContent = r.code;
+      groupeRegions.appendChild(t);
+    });
+
+    const groupePoints = document.getElementById("points-carte");
+    const anneau = document.getElementById("anneau");
+    const pointsParId = {};
+
+    CENTRES.forEach(function (c) {
+      const g = creer("g", { tabindex: 0, role: "button", "aria-label": "Centre " + c.id + " : " + c.nom, style: "cursor:pointer" });
+      const cercle = creer("circle", { cx: c.x, cy: c.y, r: 5, fill: "#8a9a92", stroke: "#ffffff", "stroke-width": 1.5 });
+      const num = creer("text", { x: c.x + 15, y: c.y + 3.5, "font-family": "Bricolage Grotesque, system-ui, sans-serif", "font-size": 10, fill: "#14313b" });
+      num.textContent = c.id;
+      g.appendChild(cercle);
+      g.appendChild(num);
+      g.addEventListener("click", function () { choisir(c.id); });
+      g.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); choisir(c.id); }
+      });
+      groupePoints.appendChild(g);
+      pointsParId[c.id] = cercle;
+    });
+
+    // ---------- La table ----------
+    const corps = document.getElementById("corps-centres");
+    const lignesParId = {};
+
+    CENTRES.forEach(function (c) {
+      const tr = document.createElement("tr");
+      const valeurs = [c.id, null, c.type, c.lits, c.region, c.h24];
+      valeurs.forEach(function (v, i) {
+        const td = document.createElement(i === 0 ? "th" : "td");
+        if (i === 0) td.scope = "row";
+        if (i === 1) {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "lien-ligne";
+          b.textContent = c.nom;
+          b.addEventListener("click", function () { choisir(c.id); });
+          td.appendChild(b);
+        } else {
+          td.textContent = v;
+        }
+        tr.appendChild(td);
+      });
+      corps.appendChild(tr);
+      lignesParId[c.id] = tr;
+    });
+
+    // ---------- La requête ----------
+    const CHAMPS = {
+      lits:   { sql: "lits",       categorique: false, ops: ["=", ">", "<", "≥", "≤"] },
+      type:   { sql: "type",       categorique: true,  valeurs: ["poste", "centre", "hôpital"], ops: ["=", "≠"] },
+      region: { sql: "region",     categorique: true,  valeurs: ["R1", "R2", "R3"],             ops: ["=", "≠"] },
+      h24:    { sql: "ouvert_24h", categorique: true,  valeurs: ["oui", "non"],                 ops: ["=", "≠"] }
+    };
+    const OPS_SQL = { "=": "=", "≠": "<>", ">": ">", "<": "<", "≥": ">=", "≤": "<=" };
+
+    const selChamp = document.getElementById("req-champ");
+    const selOp = document.getElementById("req-op");
+    const selValeur = document.getElementById("req-valeur");
+    const champNombre = document.getElementById("req-nombre");
+    const zoneSql = document.getElementById("req-sql");
+    const zoneResultat = document.getElementById("req-resultat");
+
+    function remplir(select, options) {
+      select.replaceChildren();
+      options.forEach(function (o) {
+        const opt = document.createElement("option");
+        opt.value = o;
+        opt.textContent = o;
+        select.appendChild(opt);
+      });
+    }
+
+    // Quand la colonne change, les opérateurs et la zone de valeur changent aussi
+    function adapterChamp() {
+      const def = CHAMPS[selChamp.value];
+      remplir(selOp, def.ops);
+      if (def.categorique) {
+        remplir(selValeur, def.valeurs);
+        selValeur.hidden = false;
+        champNombre.hidden = true;
+      } else {
+        selValeur.hidden = true;
+        champNombre.hidden = false;
+      }
+    }
+
+    function respecte(c, champ, op, valeur) {
+      const v = c[champ];
+      switch (op) {
+        case "=": return String(v) === String(valeur);
+        case "≠": return String(v) !== String(valeur);
+        case ">": return v > Number(valeur);
+        case "<": return v < Number(valeur);
+        case "≥": return v >= Number(valeur);
+        case "≤": return v <= Number(valeur);
+      }
+      return false;
+    }
+
+    function appliquerRequete() {
+      const champ = selChamp.value;
+      const def = CHAMPS[champ];
+      const op = selOp.value;
+      const valeur = def.categorique ? selValeur.value : champNombre.value;
+
+      let n = 0;
+      CENTRES.forEach(function (c) {
+        const ok = respecte(c, champ, op, valeur);
+        if (ok) n++;
+        lignesParId[c.id].className = ok ? "retenue" : "ecartee";
+        pointsParId[c.id].setAttribute("r", ok ? 9 : 5);
+        pointsParId[c.id].setAttribute("fill", ok ? "#b3412e" : "#8a9a92");
+      });
+
+      const valeurSql = def.categorique ? "'" + valeur + "'" : valeur;
+      zoneSql.textContent = "SELECT * FROM centres WHERE " + def.sql + " " + OPS_SQL[op] + " " + valeurSql + ";";
+      zoneResultat.textContent = n === 0
+        ? "Aucun centre ne répond à cette requête."
+        : n + (n > 1 ? " centres" : " centre") + " sur " + CENTRES.length + " répondent à la requête.";
+
+      remettreSelection();
+    }
+
+    // ---------- La sélection d'un centre (clic sur la table ou sur la carte) ----------
+    let selectionId = null;
+    const texteSelection = document.getElementById("selection-texte");
+
+    function choisir(id) {
+      selectionId = (selectionId === id) ? null : id;
+      remettreSelection();
+    }
+
+    function remettreSelection() {
+      CENTRES.forEach(function (c) {
+        lignesParId[c.id].classList.toggle("selection", c.id === selectionId);
+      });
+      if (selectionId === null) {
+        anneau.setAttribute("visibility", "hidden");
+        texteSelection.textContent = "Aucun centre sélectionné. Cliquez sur un nom ou sur un point.";
+        return;
+      }
+      const c = CENTRES.find(function (x) { return x.id === selectionId; });
+      anneau.setAttribute("cx", c.x);
+      anneau.setAttribute("cy", c.y);
+      anneau.setAttribute("visibility", "visible");
+      texteSelection.textContent = "Sélection : « " + c.nom + " », " + c.type + ", " + c.lits + " lit" + (c.lits > 1 ? "s" : "") +
+        ", région " + c.region + ", " + (c.h24 === "oui" ? "ouvert" : "non ouvert") + " 24 h/24. C'est une seule ligne de la table, reliée à un seul point de la carte.";
+    }
+
+    selChamp.addEventListener("change", function () { adapterChamp(); appliquerRequete(); });
+    selOp.addEventListener("change", appliquerRequete);
+    selValeur.addEventListener("change", appliquerRequete);
+    champNombre.addEventListener("input", appliquerRequete);
+
+    adapterChamp();
+    selOp.value = ">";
+    appliquerRequete();
+
+    // ---------- La jointure ----------
+    const EXTRAIT = [1, 3, 5, 6, 10];
+    const bonA = document.getElementById("join-a");
+    const bonB = document.getElementById("join-b");
+    const bonC = document.getElementById("join-c");
+    const resultatJointure = document.getElementById("join-resultat");
+    const boutonJointure = document.getElementById("bouton-jointure");
+
+    function puce(code) {
+      const s = document.createElement("span");
+      s.className = "puce puce-" + code.toLowerCase();
+      s.textContent = code;
+      return s;
+    }
+
+    function cellule(contenu) {
+      const td = document.createElement("td");
+      if (typeof contenu === "string" || typeof contenu === "number") { td.textContent = contenu; }
+      else { td.appendChild(contenu); }
+      return td;
+    }
+
+    EXTRAIT.forEach(function (id) {
+      const c = CENTRES.find(function (x) { return x.id === id; });
+      const tr = document.createElement("tr");
+      tr.appendChild(cellule(c.nom));
+      tr.appendChild(cellule(puce(c.region)));
+      bonA.appendChild(tr);
+
+      const r = REGIONS.find(function (x) { return x.code === c.region; });
+      const trc = document.createElement("tr");
+      trc.appendChild(cellule(c.nom));
+      trc.appendChild(cellule(puce(c.region)));
+      trc.appendChild(cellule(r.nom));
+      trc.appendChild(cellule(r.population.toLocaleString("fr-FR")));
+      bonC.appendChild(trc);
+    });
+
+    REGIONS.forEach(function (r) {
+      const tr = document.createElement("tr");
+      tr.appendChild(cellule(puce(r.code)));
+      tr.appendChild(cellule(r.nom));
+      tr.appendChild(cellule(r.population.toLocaleString("fr-FR")));
+      bonB.appendChild(tr);
+    });
+
+    boutonJointure.addEventListener("click", function () {
+      const ouvert = resultatJointure.hidden;
+      resultatJointure.hidden = !ouvert;
+      boutonJointure.setAttribute("aria-expanded", ouvert ? "true" : "false");
+      boutonJointure.textContent = ouvert ? "Défaire la jointure" : "Faire la jointure";
+    });
+  </script>
+
+</body>
+</html>

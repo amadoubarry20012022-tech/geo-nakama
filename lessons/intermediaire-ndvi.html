@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Compositions colorées et NDVI : Géo Nakama</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Literata:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="entete">
+    <div class="conteneur">
+      <a class="logo" href="../index.html">Géo Nakama</a>
+      <nav class="navigation" aria-label="Navigation principale">
+        <a href="../index.html#niveaux">Les niveaux</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="lecon">
+    <div class="conteneur">
+
+      <p class="fil"><a href="../index.html">Accueil</a> / Intermédiaire / Compositions colorées et NDVI</p>
+
+      <p class="quiz-info" id="avis-niveau" hidden>
+        Ce module appartient au niveau Intermédiaire, qui s'ouvre après le quiz final du niveau Débutant.
+        Vous pouvez le lire, mais le parcours est pensé pour être suivi dans l'ordre :
+        <a href="debutant-quiz-final.html">voir le niveau Débutant</a>.
+      </p>
+
+      <div class="lecon-entete">
+        <h1>Compositions colorées et NDVI</h1>
+        <p>Les bandes d'une image satellite sont des matériaux bruts. En les mélangeant ou en les combinant par un calcul, on fait apparaître ce qu'un œil humain ne voit pas.</p>
+      </div>
+
+      <section class="objectifs" aria-labelledby="objectifs-titre">
+        <h2 id="objectifs-titre">Objectifs de cette leçon</h2>
+        <ul>
+          <li>Construire une composition colorée, en vraies ou en fausses couleurs.</li>
+          <li>Calculer et interpréter un NDVI.</li>
+          <li>Utiliser un seuil et deux dates pour suivre la végétation.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 1. Compositions colorées ===== -->
+      <section class="lecon-section" aria-labelledby="compo-titre">
+        <h2 id="compo-titre">Mélanger les bandes pour voir autrement</h2>
+        <p>Un écran fabrique ses couleurs avec trois canaux : le <strong>rouge</strong>, le <strong>vert</strong> et le <strong>bleu</strong>. Une <strong>composition colorée</strong> consiste à choisir <strong>quelle bande envoyer sur chaque canal</strong>.</p>
+        <ul>
+          <li><strong>Vraies couleurs</strong> : la bande rouge sur le canal rouge, la bande verte sur le canal vert, la bande bleue sur le canal bleu. On voit la scène comme un œil la verrait.</li>
+          <li><strong>Fausses couleurs infrarouge</strong> : le proche infrarouge sur le canal rouge, la bande rouge sur le canal vert, la bande verte sur le canal bleu. La végétation, très brillante en proche infrarouge, devient <strong>rouge vif</strong>.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 2. Démo A : mélangeur ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="demoa-titre">
+        <h2 id="demoa-titre">À vous de jouer : le mélangeur de bandes</h2>
+        <p>C'est la scène fictive du module précédent (saison des pluies). Choisissez une composition prédéfinie, ou réglez vous-même la bande envoyée sur chaque canal.</p>
+
+        <div class="demo">
+          <div class="onglets" role="group" aria-label="Compositions prédéfinies" id="presets"></div>
+
+          <div class="requete">
+            <div>
+              <label for="canal-rouge">Canal rouge de l'écran</label>
+              <select id="canal-rouge"></select>
+            </div>
+            <div>
+              <label for="canal-vert">Canal vert de l'écran</label>
+              <select id="canal-vert"></select>
+            </div>
+            <div>
+              <label for="canal-bleu">Canal bleu de l'écran</label>
+              <select id="canal-bleu"></select>
+            </div>
+          </div>
+
+          <canvas id="scene-mix" class="scene" role="img" aria-label="Scène fictive affichée avec la composition colorée choisie"></canvas>
+
+          <p class="demo-message" id="texte-mix" aria-live="polite" style="min-height:6em"></p>
+        </div>
+      </section>
+
+      <!-- ===== 3. NDVI ===== -->
+      <section class="lecon-section" aria-labelledby="ndvi-titre">
+        <h2 id="ndvi-titre">Le NDVI : un calcul qui isole la végétation</h2>
+        <p>Une plante en bonne santé <strong>absorbe le rouge</strong> (pour la photosynthèse) et <strong>réfléchit fortement le proche infrarouge</strong>. L'écart entre ces deux bandes est donc un excellent indicateur de végétation. Le <strong>NDVI</strong> (<em>Normalized Difference Vegetation Index</em>) le résume en un nombre :</p>
+        <pre class="code-sql">NDVI = (PIR − Rouge) / (PIR + Rouge)</pre>
+        <p>Le résultat est toujours compris entre <strong>−1 et +1</strong>. Diviser par la somme permet de comparer des images prises à des moments ou sous des éclairages différents.</p>
+        <p>Vous le calculez pixel par pixel : un raster à plusieurs bandes devient un <strong>nouveau raster à une seule bande</strong>, le NDVI. Voici les ordres de grandeur :</p>
+
+        <p class="indice-defilement">Faites défiler le tableau vers la droite pour voir toutes les colonnes.</p>
+        <div class="tableau-defile" tabindex="0" role="region" aria-label="Valeurs typiques du NDVI, tableau défilant horizontalement">
+          <table class="comparatif">
+            <caption>Lire une valeur de NDVI</caption>
+            <thead>
+              <tr><th scope="col">Surface</th><th scope="col">NDVI typique</th><th scope="col">Pourquoi</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Eau libre</th><td>Négatif (environ −0,3 à 0)</td><td>Le proche infrarouge est absorbé : le rouge dépasse le PIR</td></tr>
+              <tr><th scope="row">Nuages, neige</th><td>Proche de 0 ou négatif</td><td>Brillants dans toutes les bandes, sans contraste</td></tr>
+              <tr><th scope="row">Sol nu, toits, routes</th><td>0 à 0,2 environ</td><td>Légèrement plus clairs en PIR qu'en rouge</td></tr>
+              <tr><th scope="row">Savane, végétation clairsemée</th><td>0,2 à 0,4 environ</td><td>Un peu de végétation mélangée au sol</td></tr>
+              <tr><th scope="row">Cultures, végétation dense</th><td>0,4 à 0,9 environ</td><td>Forte absorption du rouge, forte réflexion du PIR</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===== 4. Démo B : NDVI ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="demob-titre">
+        <h2 id="demob-titre">À vous de jouer : la carte NDVI</h2>
+        <p>La même scène, vue en NDVI. Passez du <strong>dégradé</strong> à la <strong>classification par seuil</strong> et réglez le seuil au-dessus duquel un pixel est considéré comme de la végétation. Comparez ensuite les deux saisons : en saison sèche, les cultures sont récoltées et l'herbe a jauni. Cliquez sur l'image, ou sur un bouton de surface, pour voir le calcul.</p>
+
+        <div class="demo">
+          <div class="onglets" role="group" aria-label="Saison" id="boutons-saison"></div>
+          <div class="onglets" role="group" aria-label="Affichage" id="boutons-affichage"></div>
+
+          <div class="demo-controle" id="zone-seuil">
+            <label for="seuil">Seuil de végétation</label>
+            <input type="range" id="seuil" min="-0.2" max="0.9" step="0.05" value="0.3" aria-describedby="texte-ndvi">
+            <output id="valeur-seuil" for="seuil"></output>
+          </div>
+
+          <canvas id="scene-ndvi" class="scene" role="img" aria-label="Carte NDVI de la scène fictive"></canvas>
+
+          <div id="legende-degrade">
+            <div class="rampe" id="rampe"></div>
+            <div class="rampe-etiquettes" aria-hidden="true"><span>−0,4 (eau)</span><span>0</span><span>0,45</span><span>0,9 (végétation dense)</span></div>
+          </div>
+          <p class="legende-carte" id="legende-seuil" hidden>
+            <span class="pastille-legende" style="background:#2f7d4f"></span> végétation (NDVI au-dessus du seuil)
+            <span class="pastille-legende" style="background:#d9d6c8;border:1px solid #8a9a92"></span> le reste
+          </p>
+
+          <div class="onglets" role="group" aria-label="Choisir une surface pour voir le calcul" id="boutons-surfaces" style="margin-top:1rem"></div>
+
+          <p class="demo-message" id="texte-ndvi" aria-live="polite" style="min-height:5em"></p>
+          <p class="demo-message" id="texte-calcul" aria-live="polite" style="min-height:3em;margin-top:0.25rem"></p>
+        </div>
+      </section>
+
+      <!-- ===== 5. En pratique ===== -->
+      <section class="lecon-section" aria-labelledby="pratique-titre">
+        <h2 id="pratique-titre">Le calculer en pratique</h2>
+        <p>Il suffit de connaître les bonnes bandes. Pour <strong>Sentinel-2</strong>, le proche infrarouge est la bande 8 et le rouge la bande 4. Pour <strong>Landsat 8 et 9</strong>, ce sont les bandes 5 et 4.</p>
+        <p>Dans un logiciel de SIG, on utilise la calculatrice raster avec la formule ci-dessus. Dans Google Earth Engine, une seule ligne suffit :</p>
+        <pre class="code-sql">var ndvi = image.normalizedDifference(['B8', 'B4']);</pre>
+        <p>Calculer le NDVI à deux dates, puis soustraire les deux rasters, donne une <strong>carte de changement</strong> : c'est le principe du suivi de la végétation dans le temps.</p>
+
+        <div class="piege">
+          <strong>Le NDVI n'est pas parfait.</strong> Les nuages et leurs ombres faussent les valeurs. Les sols très clairs ou humides perturbent le résultat quand la végétation est rare. Sur une végétation très dense, l'indice se <em>sature</em> et ne distingue plus une forêt d'une autre. Un seuil valable pour une région et une saison ne l'est pas forcément ailleurs : il faut le vérifier sur le terrain. D'autres indices existent, comme le NDWI pour l'eau ou l'EVI qui corrige en partie la saturation.
+        </div>
+      </section>
+
+      <!-- ===== 6. À retenir ===== -->
+      <section class="retenir" aria-labelledby="retenir-titre">
+        <h2 id="retenir-titre">À retenir</h2>
+        <ul>
+          <li>Une composition colorée envoie une bande sur chaque canal de l'écran ; en fausses couleurs infrarouge, la végétation est rouge vif.</li>
+          <li>NDVI = (PIR − Rouge) / (PIR + Rouge), entre −1 et +1 : négatif pour l'eau, faible pour le sol nu, élevé pour la végétation dense.</li>
+          <li>Un seuil classe la végétation, et deux dates donnent une carte de changement. Dans les deux cas, il faut vérifier sur le terrain.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 7. Quiz ===== -->
+      <section class="lecon-section" id="quiz" aria-labelledby="quiz-titre">
+        <h2 id="quiz-titre">Quiz du module</h2>
+        <p>Quatre questions pour vérifier que c'est bien clair. Il faut au moins 3 bonnes réponses pour valider le module.</p>
+        <div id="quiz-conteneur" class="quiz"></div>
+      </section>
+
+      <nav class="nav-modules" aria-label="Navigation entre les modules">
+        <a class="nav-precedent" href="intermediaire-images-satellites.html" rel="prev"><span class="nav-etiquette">Module précédent</span>Les images satellites</a>
+        <a class="nav-suivant" href="intermediaire-cartographie.html" rel="next"><span class="nav-etiquette">Module suivant</span>Cartographier proprement</a>
+      </nav>
+
+    </div>
+  </main>
+
+  <footer class="pied">
+    <div class="conteneur">
+      <p>Géo Nakama : un projet pour apprendre la géomatique par l'image.</p>
+    </div>
+  </footer>
+
+  <script src="../js/progress.js"></script>
+  <script src="../js/quiz.js"></script>
+
+  <script>
+    if (!Progression.estValide("debutant-quiz-final")) {
+      document.getElementById("avis-niveau").hidden = false;
+    }
+  </script>
+
+  <!-- Les questions de CE module -->
+  <script>
+    creerQuiz(document.getElementById("quiz-conteneur"), {
+      id: "intermediaire-compositions-ndvi",
+      seuil: 3,
+      questions: [
+        {
+          enonce: "Dans une composition en fausses couleurs infrarouge, de quelle couleur apparaît la végétation en bonne santé ?",
+          choix: ["En bleu", "En noir", "En rouge vif", "En jaune"],
+          bonne: 2,
+          explication: "Le proche infrarouge, très brillant pour la végétation, est envoyé sur le canal rouge de l'écran : la végétation devient rouge vif."
+        },
+        {
+          enonce: "Quelle est la formule du NDVI ?",
+          choix: [
+            "(PIR − Rouge) / (PIR + Rouge)",
+            "(Rouge − PIR) / (Rouge + PIR)",
+            "PIR × Rouge",
+            "PIR + Rouge + Vert"
+          ],
+          bonne: 0,
+          explication: "Le NDVI est la différence entre le proche infrarouge et le rouge, divisée par leur somme. Le résultat est toujours compris entre −1 et +1."
+        },
+        {
+          enonce: "Quelle valeur de NDVI correspond le plus probablement à de l'eau libre ?",
+          choix: ["0,8", "0,5", "0,2", "Une valeur négative"],
+          bonne: 3,
+          explication: "L'eau absorbe presque tout le proche infrarouge : le rouge dépasse alors le PIR, et le NDVI devient négatif."
+        },
+        {
+          enonce: "Pourquoi le NDVI d'une même zone de savane baisse-t-il entre la saison des pluies et la saison sèche ?",
+          choix: [
+            "Parce que le satellite change d'orbite",
+            "Parce que la végétation sèche reflète moins de proche infrarouge et absorbe moins de rouge",
+            "Parce que les pixels grossissent",
+            "Parce que la formule du NDVI change selon la saison"
+          ],
+          bonne: 1,
+          explication: "Quand la plante jaunit, elle perd sa chlorophylle : elle réfléchit moins de proche infrarouge et absorbe moins de rouge. L'écart entre les deux bandes, donc le NDVI, diminue."
+        }
+      ]
+    });
+  </script>
+
+  <!-- Script des démonstrations : la scène fictive du module précédent, vue en compositions colorées puis en NDVI -->
+  <script>
+    const TAILLE = 300;      // la scène mesure 300 m sur 300 m
+    const PAS = 3;           // pixels de 3 m
+    const N = TAILLE / PAS;  // 100 x 100 pixels
+    const BANDES = ["Bleu", "Vert", "Rouge", "Proche infrarouge"];
+
+    // Réflectance par bande (bleu, vert, rouge, proche infrarouge) : valeurs simplifiées, pour l'illustration
+    const SURFACES_PLUIES = {
+      eau:        { nom: "Eau",                   refl: [0.08, 0.07, 0.04, 0.02] },
+      vegDense:   { nom: "Végétation dense",      refl: [0.04, 0.09, 0.05, 0.50] },
+      vegCulture: { nom: "Culture en croissance", refl: [0.05, 0.10, 0.08, 0.38] },
+      sol:        { nom: "Sol nu",                refl: [0.12, 0.16, 0.22, 0.28] },
+      savane:     { nom: "Savane",                refl: [0.07, 0.11, 0.13, 0.28] },
+      route:      { nom: "Route",                 refl: [0.22, 0.24, 0.26, 0.28] },
+      toit:       { nom: "Toit",                  refl: [0.18, 0.20, 0.30, 0.32] }
+    };
+    // En saison sèche : les cultures sont récoltées, l'herbe jaunit et les arbres perdent de leur éclat
+    const SURFACES_SECHE = Object.assign({}, SURFACES_PLUIES, {
+      vegDense:   { nom: "Végétation dense (saison sèche)", refl: [0.05, 0.09, 0.08, 0.32] },
+      vegCulture: { nom: "Champ après récolte",             refl: [0.10, 0.14, 0.21, 0.27] },
+      savane:     { nom: "Savane (herbe jaunie)",           refl: [0.09, 0.13, 0.20, 0.25] }
+    });
+    const SAISONS = { pluies: SURFACES_PLUIES, seche: SURFACES_SECHE };
+
+    const MAISONS = [[45, 158], [62, 172], [80, 156], [95, 180], [52, 190]];
+    const PARCELLES = [
+      { x0: 35,  x1: 115, y0: 150, y1: 205, c: "sol" },
+      { x0: 0,   x1: 140, y0: 0,   y1: 118, c: "vegDense" },
+      { x0: 0,   x1: 125, y0: 150, y1: 300, c: "vegCulture" },
+      { x0: 255, x1: 300, y0: 0,   y1: 105, c: "vegDense" },
+      { x0: 250, x1: 300, y0: 150, y1: 300, c: "sol" },
+      { x0: 140, x1: 190, y0: 165, y1: 300, c: "sol" }
+    ];
+
+    // Quelle surface se trouve au point (x, y) de la scène ? (en mètres)
+    function surfaceEn(x, y) {
+      for (let i = 0; i < MAISONS.length; i++) {
+        const m = MAISONS[i];
+        if (x >= m[0] && x < m[0] + 10 && y >= m[1] && y < m[1] + 10) return "toit";
+      }
+      if (Math.abs(y - (140 - 0.1 * x)) / Math.sqrt(1.01) < 4) return "route";
+      const xc = 215 + 30 * Math.sin(y / 45);
+      if (Math.abs(x - xc) < 11) return "eau";
+      for (let i = 0; i < PARCELLES.length; i++) {
+        const p = PARCELLES[i];
+        if (x >= p.x0 && x < p.x1 && y >= p.y0 && y < p.y1) return p.c;
+      }
+      return "savane";
+    }
+
+    // Pour chaque saison, on calcule une fois la réflectance moyenne de chaque pixel (4 mesures x 4 mesures par pixel)
+    const SS = 4;
+    const REFL = {};
+    Object.keys(SAISONS).forEach(function (saison) {
+      const table = SAISONS[saison];
+      const donnees = new Float32Array(N * N * 4);
+      for (let j = 0; j < N; j++) {
+        for (let i = 0; i < N; i++) {
+          const somme = [0, 0, 0, 0];
+          for (let sj = 0; sj < SS; sj++) {
+            for (let si = 0; si < SS; si++) {
+              const r = table[surfaceEn((i + (si + 0.5) / SS) * PAS, (j + (sj + 0.5) / SS) * PAS)].refl;
+              for (let b = 0; b < 4; b++) somme[b] += r[b];
+            }
+          }
+          for (let b = 0; b < 4; b++) donnees[(j * N + i) * 4 + b] = somme[b] / (SS * SS);
+        }
+      }
+      REFL[saison] = donnees;
+    });
+
+    function borner(v) { return Math.max(0, Math.min(255, Math.round(v))); }
+    function teinte(refl) { return borner(Math.pow(refl / 0.35, 0.6) * 255); }
+    function ndviDe(pir, rouge) { return (pir - rouge) / (pir + rouge); }
+    function formater(v, d) { return v.toLocaleString("fr-FR", { minimumFractionDigits: d, maximumFractionDigits: d }); }
+
+    // ---------- Démonstration A : le mélangeur de bandes ----------
+    const sceneMix = document.getElementById("scene-mix");
+    const selecteurs = [document.getElementById("canal-rouge"), document.getElementById("canal-vert"), document.getElementById("canal-bleu")];
+    const texteMix = document.getElementById("texte-mix");
+    const zonePresets = document.getElementById("presets");
+    const NOMS_CANAUX = ["rouge", "vert", "bleu"];
+
+    const PRESETS = [
+      { nom: "Vraies couleurs",              bandes: [2, 1, 0] },   // rouge, vert, bleu
+      { nom: "Fausses couleurs infrarouge",  bandes: [3, 2, 1] }    // PIR, rouge, vert
+    ];
+
+    selecteurs.forEach(function (sel) {
+      BANDES.forEach(function (nom, i) {
+        const o = document.createElement("option");
+        o.value = i;
+        o.textContent = nom;
+        sel.appendChild(o);
+      });
+      sel.addEventListener("change", majMix);
+    });
+
+    const boutonsPresets = PRESETS.map(function (p) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "onglet";
+      b.textContent = p.nom;
+      b.addEventListener("click", function () {
+        p.bandes.forEach(function (bande, c) { selecteurs[c].value = bande; });
+        majMix();
+      });
+      zonePresets.appendChild(b);
+      return b;
+    });
+
+    function majMix() {
+      const bandes = selecteurs.map(function (s) { return Number(s.value); });
+      sceneMix.width = N;
+      sceneMix.height = N;
+      const ctx = sceneMix.getContext("2d");
+      const image = ctx.createImageData(N, N);
+      const donnees = REFL.pluies;
+      for (let p = 0; p < N * N; p++) {
+        for (let c = 0; c < 3; c++) {
+          image.data[p * 4 + c] = teinte(donnees[p * 4 + bandes[c]]);
+        }
+        image.data[p * 4 + 3] = 255;
+      }
+      ctx.putImageData(image, 0, 0);
+
+      // Quel préréglage correspond ? Et que dit-on de cette composition ?
+      let correspondance = -1;
+      PRESETS.forEach(function (p, i) {
+        if (p.bandes.join() === bandes.join()) correspondance = i;
+      });
+      boutonsPresets.forEach(function (b, i) { b.setAttribute("aria-pressed", i === correspondance ? "true" : "false"); });
+
+      let texte;
+      if (correspondance === 0) {
+        texte = "Vraies couleurs : on affiche la bande rouge sur le canal rouge, la verte sur le vert et la bleue sur le bleu. La végétation est verte, l'eau bleu-gris, les sols beiges, comme sur une photo.";
+      } else if (correspondance === 1) {
+        texte = "Fausses couleurs infrarouge : la végétation, très brillante en proche infrarouge, devient rouge vif. L'eau apparaît sombre, les sols clairs et le village bleuâtre. Ce n'est pas la couleur réelle, mais la végétation saute aux yeux.";
+      } else if (bandes[0] === bandes[1] && bandes[1] === bandes[2]) {
+        texte = "La même bande est envoyée sur les trois canaux : l'image est en niveaux de gris, comme dans le module précédent.";
+      } else {
+        const canalPIR = bandes.indexOf(3);
+        texte = "Composition personnalisée : canal rouge ← " + BANDES[bandes[0]].toLowerCase() + ", canal vert ← " + BANDES[bandes[1]].toLowerCase() +
+                ", canal bleu ← " + BANDES[bandes[2]].toLowerCase() + ". ";
+        texte += canalPIR >= 0
+          ? "La végétation, très brillante en proche infrarouge, prend la couleur du canal " + NOMS_CANAUX[canalPIR] + "."
+          : "Sans le proche infrarouge, la végétation reste sombre : c'est ce qui rend cette composition peu parlante pour la végétation.";
+      }
+      texteMix.textContent = texte;
+    }
+
+    // ---------- Démonstration B : la carte NDVI ----------
+    const sceneNdvi = document.getElementById("scene-ndvi");
+    const curseurSeuil = document.getElementById("seuil");
+    const valeurSeuil = document.getElementById("valeur-seuil");
+    const zoneSeuil = document.getElementById("zone-seuil");
+    const legendeDegrade = document.getElementById("legende-degrade");
+    const legendeSeuil = document.getElementById("legende-seuil");
+    const texteNdvi = document.getElementById("texte-ndvi");
+    const texteCalcul = document.getElementById("texte-calcul");
+    const rampe = document.getElementById("rampe");
+
+    // Le dégradé de couleurs du NDVI : (valeur, rouge, vert, bleu), interpolé entre les repères
+    const REPERES = [
+      [-0.4, 40, 70, 110], [0, 140, 140, 140], [0.1, 200, 170, 120], [0.25, 220, 200, 110],
+      [0.45, 150, 190, 80], [0.65, 60, 150, 60], [0.9, 10, 95, 40]
+    ];
+    function couleurNdvi(v) {
+      if (v <= REPERES[0][0]) return REPERES[0].slice(1);
+      for (let i = 1; i < REPERES.length; i++) {
+        if (v <= REPERES[i][0]) {
+          const a = REPERES[i - 1], b = REPERES[i];
+          const t = (v - a[0]) / (b[0] - a[0]);
+          return [a[1] + t * (b[1] - a[1]), a[2] + t * (b[2] - a[2]), a[3] + t * (b[3] - a[3])];
+        }
+      }
+      return REPERES[REPERES.length - 1].slice(1);
+    }
+    // La légende reprend exactement les mêmes couleurs
+    rampe.style.background = "linear-gradient(to right, " + REPERES.map(function (r) {
+      return "rgb(" + r[1] + "," + r[2] + "," + r[3] + ") " + (((r[0] + 0.4) / 1.3) * 100).toFixed(1) + "%";
+    }).join(", ") + ")";
+
+    let saison = "pluies", affichage = "degrade", surfaceActive = "vegDense";
+
+    function creerBoutons(zone, liste, action) {
+      return liste.map(function (item, i) {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "onglet";
+        b.textContent = item;
+        b.addEventListener("click", function () { action(i); });
+        zone.appendChild(b);
+        return b;
+      });
+    }
+    const boutonsSaison = creerBoutons(document.getElementById("boutons-saison"), ["Saison des pluies", "Saison sèche"], function (i) {
+      saison = i === 0 ? "pluies" : "seche"; majNdvi(); majCalcul();
+    });
+    const boutonsAffichage = creerBoutons(document.getElementById("boutons-affichage"), ["Dégradé de NDVI", "Classification par seuil"], function (i) {
+      affichage = i === 0 ? "degrade" : "seuil"; majNdvi();
+    });
+    const CLES_SURFACES = ["eau", "vegDense", "vegCulture", "savane", "sol", "route"];
+    const boutonsSurfaces = creerBoutons(document.getElementById("boutons-surfaces"),
+      ["Eau", "Végétation dense", "Culture", "Savane", "Sol nu", "Route"], function (i) {
+        surfaceActive = CLES_SURFACES[i]; majCalcul();
+      });
+
+    function majNdvi() {
+      const seuil = Number(curseurSeuil.value);
+      valeurSeuil.textContent = formater(seuil, 2);
+      boutonsSaison.forEach(function (b, i) { b.setAttribute("aria-pressed", (i === 0) === (saison === "pluies") ? "true" : "false"); });
+      boutonsAffichage.forEach(function (b, i) { b.setAttribute("aria-pressed", (i === 0) === (affichage === "degrade") ? "true" : "false"); });
+      zoneSeuil.hidden = affichage !== "seuil";
+      legendeDegrade.hidden = affichage !== "degrade";
+      legendeSeuil.hidden = affichage !== "seuil";
+
+      sceneNdvi.width = N;
+      sceneNdvi.height = N;
+      const ctx = sceneNdvi.getContext("2d");
+      const image = ctx.createImageData(N, N);
+      const donnees = REFL[saison];
+      let vegetation = 0;
+      for (let p = 0; p < N * N; p++) {
+        const v = ndviDe(donnees[p * 4 + 3], donnees[p * 4 + 2]);
+        let c;
+        if (affichage === "degrade") {
+          c = couleurNdvi(v);
+        } else if (v >= seuil) {
+          c = [47, 125, 79]; vegetation++;
+        } else {
+          c = [217, 214, 200];
+        }
+        image.data[p * 4] = c[0]; image.data[p * 4 + 1] = c[1]; image.data[p * 4 + 2] = c[2]; image.data[p * 4 + 3] = 255;
+      }
+      ctx.putImageData(image, 0, 0);
+
+      const nomSaison = saison === "pluies" ? "saison des pluies" : "saison sèche";
+      if (affichage === "degrade") {
+        texteNdvi.textContent = "NDVI en " + nomSaison + " : le vert foncé marque la végétation dense, le jaune et le beige les sols et l'herbe, le gris et le bleu l'eau. " +
+          (saison === "seche" ? "Les champs récoltés et la savane ont perdu leur vert : l'écart avec la saison des pluies est net." : "Les champs et les arbres ressortent en vert.");
+      } else {
+        const part = Math.round(vegetation / (N * N) * 100);
+        texteNdvi.textContent = "En " + nomSaison + ", avec un seuil de " + formater(seuil, 2) + ", " + part + " % de la scène est classée « végétation ». Déplacez le seuil, puis changez de saison : la surface classée varie beaucoup.";
+      }
+    }
+
+    // Le calcul du NDVI pour une surface (sert au clic sur l'image et aux boutons)
+    function majCalcul() {
+      const s = SAISONS[saison][surfaceActive];
+      const pir = s.refl[3], rouge = s.refl[2];
+      boutonsSurfaces.forEach(function (b, i) { b.setAttribute("aria-pressed", CLES_SURFACES[i] === surfaceActive ? "true" : "false"); });
+      texteCalcul.textContent = s.nom + " : NDVI = (" + formater(pir, 2) + " − " + formater(rouge, 2) + ") / (" + formater(pir, 2) + " + " + formater(rouge, 2) +
+        ") = " + formater(ndviDe(pir, rouge), 2) + ".";
+    }
+
+    sceneNdvi.addEventListener("click", function (e) {
+      const r = sceneNdvi.getBoundingClientRect();
+      surfaceActive = surfaceEn((e.clientX - r.left) / r.width * TAILLE, (e.clientY - r.top) / r.height * TAILLE);
+      majCalcul();
+    });
+    curseurSeuil.addEventListener("input", majNdvi);
+
+    // Départ : vraies couleurs pour le mélangeur, NDVI en saison des pluies pour la carte
+    PRESETS[0].bandes.forEach(function (bande, c) { selecteurs[c].value = bande; });
+    majMix();
+    majNdvi();
+    majCalcul();
+  </script>
+
+</body>
+</html>

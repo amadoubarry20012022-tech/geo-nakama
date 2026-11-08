@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Les projections en détail : Géo Nakama</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Literata:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="entete">
+    <div class="conteneur">
+      <a class="logo" href="../index.html">Géo Nakama</a>
+      <nav class="navigation" aria-label="Navigation principale">
+        <a href="../index.html#niveaux">Les niveaux</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="lecon">
+    <div class="conteneur">
+
+      <p class="fil"><a href="../index.html">Accueil</a> / Intermédiaire / Les projections en détail</p>
+
+      <!-- Bandeau affiché seulement si le niveau Débutant n'est pas encore validé -->
+      <p class="quiz-info" id="avis-niveau" hidden>
+        Ce module appartient au niveau Intermédiaire, qui s'ouvre après le quiz final du niveau Débutant.
+        Vous pouvez le lire, mais le parcours est pensé pour être suivi dans l'ordre :
+        <a href="debutant-quiz-final.html">voir le niveau Débutant</a>.
+      </p>
+
+      <div class="lecon-entete">
+        <h1>Les projections en détail</h1>
+        <p>Aplatir la Terre est impossible sans la déformer. Une projection choisit ce qu'on accepte de déformer : les formes, les surfaces ou les distances.</p>
+      </div>
+
+      <section class="objectifs" aria-labelledby="objectifs-titre">
+        <h2 id="objectifs-titre">Objectifs de cette leçon</h2>
+        <ul>
+          <li>Distinguer une projection conforme, équivalente et de compromis.</li>
+          <li>Reconnaître les déformations de Mercator, de la plate carrée et de la sinusoïdale.</li>
+          <li>Choisir une projection adaptée à un besoin, et lire un code EPSG.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 1. Ce qu'une projection peut conserver ===== -->
+      <section class="lecon-section" aria-labelledby="proprietes-titre">
+        <h2 id="proprietes-titre">Ce qu'une projection peut conserver</h2>
+        <p>Dans le module « Se repérer sur la Terre », vous avez vu qu'aplatir le globe déforme toujours quelque chose. Une projection peut chercher à conserver :</p>
+        <ul>
+          <li><strong>les angles et les formes locales</strong> : c'est une projection <strong>conforme</strong> ;</li>
+          <li><strong>les surfaces</strong> : c'est une projection <strong>équivalente</strong> ;</li>
+          <li><strong>certaines distances</strong> : c'est une projection <strong>équidistante</strong>.</li>
+        </ul>
+        <p>Aucune projection ne conserve tout à la fois. Une conforme ne peut pas être équivalente, et inversement. Les projections dites <strong>de compromis</strong> (Robinson, Winkel tripel) répartissent les erreurs pour obtenir un monde « agréable à regarder », sans rien conserver exactement.</p>
+        <p>Pour classer les projections, on regarde aussi la surface sur laquelle on projette : un <strong>cylindre</strong> (Mercator, UTM), un <strong>cône</strong> (Lambert conique) ou un <strong>plan</strong> (projections azimutales).</p>
+      </section>
+
+      <!-- ===== 2. Illustration interactive ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="demo-titre">
+        <h2 id="demo-titre">À vous de jouer : des cercles identiques, déformés</h2>
+        <p>Sur le globe, tous les cercles dessinés ci-dessous ont exactement la même taille et la même forme. Choisissez une projection et regardez ce que devient chacun d'eux : leur déformation est la signature de la projection.</p>
+
+        <div class="demo">
+          <div class="onglets" role="group" aria-label="Choisir une projection">
+            <button type="button" class="onglet" data-projection="plate" aria-pressed="false">Plate carrée</button>
+            <button type="button" class="onglet" data-projection="mercator" aria-pressed="true">Mercator</button>
+            <button type="button" class="onglet" data-projection="sinus" aria-pressed="false">Sinusoïdale</button>
+          </div>
+
+          <div style="max-width:40rem;margin:0 auto">
+            <svg id="svg-projection" viewBox="-180 -140 360 280" role="img" aria-labelledby="proj-titre proj-desc" style="display:block;width:100%;height:auto;border:1px solid var(--trait);background:#fff">
+              <title id="proj-titre">Des cercles identiques déformés par une projection</title>
+              <desc id="proj-desc">Une carte du monde quadrillée sur laquelle sont posés de nombreux cercles qui ont la même taille sur le globe. Leur forme et leur taille changent selon la projection choisie.</desc>
+              <path id="fond-proj" fill="#dce9ef" stroke="#14313b" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+              <g id="grille-proj" fill="none"></g>
+              <g id="cercles-proj"></g>
+            </svg>
+          </div>
+
+          <p class="demo-message" id="texte-projection" aria-live="polite" style="min-height:7em"></p>
+        </div>
+      </section>
+
+      <!-- ===== 3. Tableau comparatif ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="comparatif-titre">
+        <h2 id="comparatif-titre">Comparer les projections</h2>
+        <p class="indice-defilement">Faites défiler le tableau vers la droite pour voir toutes les colonnes.</p>
+        <div class="tableau-defile" tabindex="0" role="region" aria-label="Tableau comparatif des projections, défilant horizontalement">
+          <table class="comparatif">
+            <caption>Quatre projections à connaître</caption>
+            <thead>
+              <tr>
+                <th scope="col">Projection</th>
+                <th scope="col">Ce qu'elle conserve</th>
+                <th scope="col">Ce qu'elle déforme</th>
+                <th scope="col">Usage typique</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Mercator</th>
+                <td>Les angles (conforme)</td>
+                <td>Les surfaces, de façon énorme vers les pôles</td>
+                <td>Navigation, cartes en ligne (« Web Mercator »)</td>
+              </tr>
+              <tr>
+                <th scope="row">Sinusoïdale</th>
+                <td>Les surfaces (équivalente)</td>
+                <td>Les formes, surtout près des bords</td>
+                <td>Comparer des surfaces sur une carte du monde</td>
+              </tr>
+              <tr>
+                <th scope="row">UTM</th>
+                <td>Les angles, et presque les distances, dans un fuseau de 6° de large</td>
+                <td>Se dégrade en s'éloignant du fuseau</td>
+                <td>Cartes locales ou nationales, mesures en mètres</td>
+              </tr>
+              <tr>
+                <th scope="row">Plate carrée</th>
+                <td>Rien de précis</td>
+                <td>Les formes et les surfaces</td>
+                <td>Afficher simplement des coordonnées en degrés</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===== 4. Choisir sa projection ===== -->
+      <section class="lecon-section" aria-labelledby="choisir-titre">
+        <h2 id="choisir-titre">Choisir une projection</h2>
+        <p>La bonne question est : <strong>qu'est-ce que je veux mesurer ou montrer ?</strong></p>
+        <ul>
+          <li><strong>Mesurer des surfaces ou des distances sur un territoire</strong> : une projection en mètres adaptée à la zone, comme l'UTM.</li>
+          <li><strong>Comparer des surfaces sur le monde entier</strong> : une projection équivalente.</li>
+          <li><strong>Naviguer, ou afficher une carte en ligne</strong> : Mercator.</li>
+          <li><strong>Une carte du monde « esthétique »</strong> : une projection de compromis.</li>
+        </ul>
+
+        <h3>Et pour le Sénégal ?</h3>
+        <p>Le système <strong>UTM</strong> découpe le monde en 60 fuseaux de 6° de large. La plus grande partie du Sénégal se trouve dans le <strong>fuseau 28 Nord</strong>, dont le code est <strong>EPSG:32628</strong> (WGS 84 / UTM zone 28N). L'extrême est du pays, vers Kédougou, passe dans le fuseau 29 Nord (EPSG:32629).</p>
+
+        <h3>Les codes EPSG</h3>
+        <p>Un <strong>code EPSG</strong> est un numéro qui désigne un système de coordonnées, pour que deux logiciels parlent de la même chose. Trois à connaître :</p>
+        <ul>
+          <li><strong>EPSG:4326</strong> : WGS 84 en degrés (latitude, longitude), le système du GPS ;</li>
+          <li><strong>EPSG:3857</strong> : Web Mercator, utilisé par les cartes en ligne ;</li>
+          <li><strong>EPSG:32628</strong> : WGS 84 / UTM zone 28 Nord, en mètres.</li>
+        </ul>
+
+        <div class="piege">
+          <strong>Ne mesurez jamais en degrés.</strong> Un degré de longitude ne mesure pas la même distance partout (environ 111 km à l'équateur, 0 aux pôles). Pour calculer une surface ou une distance avec des coordonnées GPS, <em>reprojetez</em> d'abord vos données dans un système en mètres, comme l'UTM.
+        </div>
+      </section>
+
+      <!-- ===== 5. À retenir ===== -->
+      <section class="retenir" aria-labelledby="retenir-titre">
+        <h2 id="retenir-titre">À retenir</h2>
+        <ul>
+          <li>Une projection conforme conserve les angles, une équivalente conserve les surfaces, et aucune ne conserve les deux.</li>
+          <li>Mercator étire les surfaces vers les pôles : il sert à naviguer, pas à comparer des tailles.</li>
+          <li>Pour mesurer, reprojetez en mètres : au Sénégal, l'UTM zone 28 Nord (EPSG:32628).</li>
+        </ul>
+      </section>
+
+      <!-- ===== 6. Quiz ===== -->
+      <section class="lecon-section" id="quiz" aria-labelledby="quiz-titre">
+        <h2 id="quiz-titre">Quiz du module</h2>
+        <p>Quatre questions pour vérifier que c'est bien clair. Il faut au moins 3 bonnes réponses pour valider le module.</p>
+        <div id="quiz-conteneur" class="quiz"></div>
+      </section>
+
+      <nav class="nav-modules" aria-label="Navigation entre les modules">
+        <a class="nav-precedent" href="../index.html#niveaux" rel="prev"><span class="nav-etiquette">Retour</span>Les niveaux</a>
+        <a class="nav-suivant" href="intermediaire-bases-donnees-spatiales.html" rel="next"><span class="nav-etiquette">Module suivant</span>Les bases de données spatiales</a>
+      </nav>
+
+    </div>
+  </main>
+
+  <footer class="pied">
+    <div class="conteneur">
+      <p>Géo Nakama : un projet pour apprendre la géomatique par l'image.</p>
+    </div>
+  </footer>
+
+  <script src="../js/progress.js"></script>
+  <script src="../js/quiz.js"></script>
+
+  <!-- Bandeau si le niveau Débutant n'est pas validé -->
+  <script>
+    if (!Progression.estValide("debutant-quiz-final")) {
+      document.getElementById("avis-niveau").hidden = false;
+    }
+  </script>
+
+  <!-- Les questions de CE module -->
+  <script>
+    creerQuiz(document.getElementById("quiz-conteneur"), {
+      id: "intermediaire-projections",
+      seuil: 3,
+      questions: [
+        {
+          enonce: "Quelle sorte de projection conserve les angles, et donc les formes locales ?",
+          choix: ["Une projection équivalente", "Une projection conforme", "Une projection sinusoïdale", "Aucune projection n'en est capable"],
+          bonne: 1,
+          explication: "Une projection conforme conserve les angles. Mercator en est l'exemple. Une projection équivalente, comme la sinusoïdale, conserve plutôt les surfaces."
+        },
+        {
+          enonce: "Dans une projection de Mercator, que devient la taille apparente des terres proches des pôles, comme le Groenland ?",
+          choix: [
+            "Elle est exacte, car Mercator conserve les surfaces",
+            "Elle est réduite, car Mercator écrase les pôles",
+            "Elle dépend de la couleur choisie",
+            "Elle est exagérée, car Mercator étire les zones proches des pôles"
+          ],
+          bonne: 3,
+          explication: "Mercator conserve les angles, mais agrandit les surfaces de plus en plus vers les pôles : à 60° de latitude, elles sont multipliées par 4."
+        },
+        {
+          enonce: "Vous avez des coordonnées GPS en degrés (WGS 84) et voulez calculer la surface d'un champ au Sénégal. Que faites-vous ?",
+          choix: [
+            "Rien : un degré a partout la même longueur",
+            "Je les convertis en pixels",
+            "Je les reprojette dans un système en mètres, comme l'UTM zone 28 Nord",
+            "Je les arrondis à deux décimales"
+          ],
+          bonne: 2,
+          explication: "La longueur d'un degré change selon la latitude. Pour mesurer, il faut un système en mètres adapté à la zone, comme l'UTM zone 28 Nord (EPSG:32628)."
+        },
+        {
+          enonce: "Que désigne le code EPSG:4326 ?",
+          choix: [
+            "Les coordonnées géographiques WGS 84, en degrés",
+            "La projection UTM zone 28 Nord",
+            "La projection Web Mercator utilisée par les cartes en ligne",
+            "Une projection conique de Lambert"
+          ],
+          bonne: 0,
+          explication: "EPSG:4326 est le WGS 84 en degrés (latitude, longitude), le système du GPS. EPSG:3857 est le Web Mercator, et EPSG:32628 est l'UTM zone 28 Nord."
+        }
+      ]
+    });
+  </script>
+
+  <!-- Script de la démonstration : les cercles de Tissot
+       Idée : on pose sur le globe des petits cercles tous identiques, puis on projette chaque
+       point de leur contour avec la formule de la projection choisie. Si la projection déforme,
+       les cercles se déforment : on voit directement l'erreur. -->
+  <script>
+    const DEG = Math.PI / 180;
+    const SVG_NS = "http://www.w3.org/2000/svg";
+    const LAT_MAX = 80;       // on ne dessine pas au-delà de 80° de latitude
+    const RAYON = 5;          // rayon des cercles sur le globe, en degrés
+
+    // Les trois projections : chacune transforme (longitude, latitude) en (x, y)
+    const PROJECTIONS = {
+      plate: {
+        formule: function (lon, lat) { return [lon, lat]; },
+        texte: "Plate carrée : les méridiens et les parallèles forment une grille régulière. Les cercles s'étirent dans le sens est-ouest quand on s'éloigne de l'équateur : ni les formes ni les surfaces ne sont respectées. À 60° de latitude, les surfaces sont multipliées par 2."
+      },
+      mercator: {
+        formule: function (lon, lat) { return [lon, Math.log(Math.tan(Math.PI / 4 + lat * DEG / 2)) / DEG]; },
+        texte: "Mercator : les cercles restent des cercles, car les angles sont conservés (projection conforme). Mais leur taille explose vers les pôles : à 60° de latitude, les surfaces sont multipliées par 4. Idéale pour naviguer, trompeuse pour comparer des tailles."
+      },
+      sinus: {
+        formule: function (lon, lat) { return [lon * Math.cos(lat * DEG), lat]; },
+        texte: "Sinusoïdale : tous les cercles ont la même surface (projection équivalente). En revanche, leur forme se déforme, surtout près des bords de la carte et des pôles. Bonne pour comparer des surfaces, pas pour mesurer des angles."
+      }
+    };
+
+    const svg = document.getElementById("svg-projection");
+    const fond = document.getElementById("fond-proj");
+    const grille = document.getElementById("grille-proj");
+    const cercles = document.getElementById("cercles-proj");
+    const texteProjection = document.getElementById("texte-projection");
+    const boutons = document.querySelectorAll("[data-projection]");
+
+    // Un point de la carte : le y est inversé, car l'axe y d'un SVG pointe vers le bas
+    function placer(formule, lon, lat) {
+      const p = formule(lon, lat);
+      return p[0].toFixed(2) + " " + (-p[1]).toFixed(2);
+    }
+
+    function cheminDepuis(points, formule, ferme) {
+      return points.map(function (p, i) {
+        return (i === 0 ? "M" : "L") + placer(formule, p[0], p[1]);
+      }).join(" ") + (ferme ? " Z" : "");
+    }
+
+    // Le point situé à une distance RAYON d'un centre, dans une direction donnée (trigonométrie sphérique)
+    function pointAutour(lon0, lat0, azimut) {
+      const phi0 = lat0 * DEG, lam0 = lon0 * DEG, c = RAYON * DEG, th = azimut * DEG;
+      const phi = Math.asin(Math.sin(phi0) * Math.cos(c) + Math.cos(phi0) * Math.sin(c) * Math.cos(th));
+      const lam = lam0 + Math.atan2(Math.sin(th) * Math.sin(c) * Math.cos(phi0), Math.cos(c) - Math.sin(phi0) * Math.sin(phi));
+      return [lam / DEG, phi / DEG];
+    }
+
+    function creer(nom, attributs) {
+      const e = document.createElementNS(SVG_NS, nom);
+      Object.keys(attributs).forEach(function (k) { e.setAttribute(k, attributs[k]); });
+      return e;
+    }
+
+    function dessiner(nom) {
+      const formule = PROJECTIONS[nom].formule;
+      grille.replaceChildren();
+      cercles.replaceChildren();
+
+      // La zone visible dépend de la projection (Mercator est beaucoup plus haute)
+      const yMax = formule(0, LAT_MAX)[1];
+      svg.setAttribute("viewBox", "-180 " + (-yMax) + " 360 " + (2 * yMax));
+
+      // Le fond : le contour de la carte (les deux méridiens à ±180°)
+      const contour = [];
+      for (let lat = -LAT_MAX; lat <= LAT_MAX; lat += 2) { contour.push([-180, lat]); }
+      for (let lat = LAT_MAX; lat >= -LAT_MAX; lat -= 2) { contour.push([180, lat]); }
+      fond.setAttribute("d", cheminDepuis(contour, formule, true));
+
+      // Le quadrillage : un méridien et un parallèle tous les 30°
+      for (let lon = -180; lon <= 180; lon += 30) {
+        const pts = [];
+        for (let lat = -LAT_MAX; lat <= LAT_MAX; lat += 2) { pts.push([lon, lat]); }
+        const greenwich = (lon === 0);
+        grille.appendChild(creer("path", {
+          d: cheminDepuis(pts, formule, false),
+          stroke: greenwich ? "#2a6f97" : "#9db3a8",
+          "stroke-width": greenwich ? 2 : 0.8,
+          "vector-effect": "non-scaling-stroke"
+        }));
+      }
+      for (let lat = -60; lat <= 60; lat += 30) {
+        const pts = [];
+        for (let lon = -180; lon <= 180; lon += 4) { pts.push([lon, lat]); }
+        const equateur = (lat === 0);
+        grille.appendChild(creer("path", {
+          d: cheminDepuis(pts, formule, false),
+          stroke: equateur ? "#e4a81c" : "#9db3a8",
+          "stroke-width": equateur ? 2 : 0.8,
+          "vector-effect": "non-scaling-stroke"
+        }));
+      }
+
+      // Les cercles identiques, posés sur une grille de points du globe
+      const latitudes = [-75, -60, -30, 0, 30, 60, 75];
+      latitudes.forEach(function (lat0) {
+        for (let lon0 = -150; lon0 <= 150; lon0 += 30) {
+          const contourCercle = [];
+          for (let azimut = 0; azimut < 360; azimut += 15) { contourCercle.push(pointAutour(lon0, lat0, azimut)); }
+          cercles.appendChild(creer("path", {
+            d: cheminDepuis(contourCercle, formule, true),
+            fill: "#b3412e",
+            "fill-opacity": 0.5,
+            stroke: "#7a2a1c",
+            "stroke-width": 0.8,
+            "vector-effect": "non-scaling-stroke"
+          }));
+        }
+      });
+
+      texteProjection.textContent = PROJECTIONS[nom].texte;
+      boutons.forEach(function (b) {
+        b.setAttribute("aria-pressed", b.dataset.projection === nom ? "true" : "false");
+      });
+    }
+
+    boutons.forEach(function (b) {
+      b.addEventListener("click", function () { dessiner(b.dataset.projection); });
+    });
+
+    dessiner("mercator");
+  </script>
+
+</body>
+</html>

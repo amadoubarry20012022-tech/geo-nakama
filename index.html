@@ -95,16 +95,26 @@
               <h3>Intermédiaire</h3>
               <p>6 modules : projections, analyse spatiale, images satellites, indices comme le NDVI.</p>
               <p class="niveau-progres" id="note-intermediaire"></p>
+              <ol class="modules" id="modules-intermediaire" hidden>
+                <li data-module="intermediaire-projections"><a href="lessons/intermediaire-projections.html">Les projections en détail</a></li>
+                <li data-module="intermediaire-bases-de-donnees-spatiales"><a href="lessons/intermediaire-bases-donnees-spatiales.html">Les bases de données spatiales</a></li>
+                <li data-module="intermediaire-analyse-spatiale"><a href="lessons/intermediaire-analyse-spatiale.html">L'analyse spatiale</a></li>
+                <li data-module="intermediaire-images-satellites"><a href="lessons/intermediaire-images-satellites.html">Les images satellites</a></li>
+                <li data-module="intermediaire-compositions-ndvi"><a href="lessons/intermediaire-ndvi.html">Compositions colorées et NDVI</a></li>
+                <li data-module="intermediaire-cartographier-proprement"><a href="lessons/intermediaire-cartographie.html">Cartographier proprement</a></li>
+              </ol>
+              <p class="quiz-final-lien" id="lien-quiz-inter" hidden><a href="lessons/intermediaire-quiz-final.html">Quiz final du niveau Intermédiaire</a> <span id="etat-quiz-inter"></span></p>
             </div>
             <span class="niveau-etat" id="etat-intermediaire">Se débloque après le quiz Débutant</span>
           </li>
 
-          <li class="niveau verrouille">
+          <li class="niveau verrouille" id="niveau-avance">
             <div>
               <h3>Avancé</h3>
               <p>6 modules : photogrammétrie, classification, analyse multi-temporelle, automatisation.</p>
+              <p class="niveau-progres" id="note-avance"></p>
             </div>
-            <span class="niveau-etat">Se débloque après le quiz Intermédiaire</span>
+            <span class="niveau-etat" id="etat-avance">Se débloque après le quiz Intermédiaire</span>
           </li>
         </ol>
       </div>
@@ -233,7 +243,53 @@
         const inter = document.getElementById("niveau-intermediaire");
         inter.classList.remove("verrouille");
         document.getElementById("etat-intermediaire").textContent = "Débloqué";
-        document.getElementById("note-intermediaire").textContent = "Les modules de ce niveau arrivent bientôt.";
+
+        // La liste des modules de l'Intermédiaire apparaît, avec ses coches et son compteur
+        const TOTAL_INTER = 6;
+        const listeInter = document.getElementById("modules-intermediaire");
+        listeInter.hidden = false;
+
+        let validesInter = 0;
+        listeInter.querySelectorAll("[data-module]").forEach(function (li) {
+          if (Progression.estValide(li.dataset.module)) {
+            validesInter++;
+            const coche = document.createElement("span");
+            coche.className = "coche";
+            coche.textContent = " ✓ validé";
+            li.appendChild(coche);
+          }
+        });
+
+        // Le quiz final de l'Intermédiaire : lien, état et compteur
+        const quizInterReussi = Progression.estValide("intermediaire-quiz-final");
+        document.getElementById("lien-quiz-inter").hidden = false;
+        const etatQuizInter = document.getElementById("etat-quiz-inter");
+        if (quizInterReussi) {
+          etatQuizInter.className = "coche";
+          etatQuizInter.textContent = "✓ réussi";
+        } else if (validesInter < TOTAL_INTER) {
+          etatQuizInter.textContent = "(s'ouvre après les " + TOTAL_INTER + " modules)";
+        }
+
+        const noteInter = document.getElementById("note-intermediaire");
+        if (validesInter === 0) {
+          noteInter.textContent = "";
+        } else if (validesInter < TOTAL_INTER) {
+          noteInter.textContent = validesInter + (validesInter > 1 ? " modules" : " module") + " sur " + TOTAL_INTER +
+                                  " validé" + (validesInter > 1 ? "s" : "") + ".";
+        } else if (!quizInterReussi) {
+          noteInter.textContent = "Les " + TOTAL_INTER + " modules sont validés : place au quiz final !";
+        } else {
+          noteInter.textContent = "Les " + TOTAL_INTER + " modules et le quiz final sont validés.";
+        }
+
+        // L'Intermédiaire passe à « Validé », et l'Avancé se débloque
+        if (quizInterReussi) {
+          document.getElementById("etat-intermediaire").textContent = "Validé";
+          document.getElementById("niveau-avance").classList.remove("verrouille");
+          document.getElementById("etat-avance").textContent = "Débloqué";
+          document.getElementById("note-avance").textContent = "Les modules de ce niveau arrivent bientôt.";
+        }
       }
     })();
   </script>

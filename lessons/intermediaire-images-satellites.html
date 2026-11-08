@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Les images satellites : Géo Nakama</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Literata:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+  <header class="entete">
+    <div class="conteneur">
+      <a class="logo" href="../index.html">Géo Nakama</a>
+      <nav class="navigation" aria-label="Navigation principale">
+        <a href="../index.html#niveaux">Les niveaux</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="lecon">
+    <div class="conteneur">
+
+      <p class="fil"><a href="../index.html">Accueil</a> / Intermédiaire / Les images satellites</p>
+
+      <p class="quiz-info" id="avis-niveau" hidden>
+        Ce module appartient au niveau Intermédiaire, qui s'ouvre après le quiz final du niveau Débutant.
+        Vous pouvez le lire, mais le parcours est pensé pour être suivi dans l'ordre :
+        <a href="debutant-quiz-final.html">voir le niveau Débutant</a>.
+      </p>
+
+      <div class="lecon-entete">
+        <h1>Les images satellites</h1>
+        <p>Une image satellite n'est pas une simple photo : c'est un raster à plusieurs couches, dont chaque pixel mesure la lumière renvoyée par le sol dans plusieurs couleurs, visibles ou non.</p>
+      </div>
+
+      <section class="objectifs" aria-labelledby="objectifs-titre">
+        <h2 id="objectifs-titre">Objectifs de cette leçon</h2>
+        <ul>
+          <li>Distinguer les quatre résolutions d'une image satellite.</li>
+          <li>Expliquer ce qu'est une bande spectrale et pourquoi la végétation ressort dans le proche infrarouge.</li>
+          <li>Choisir un capteur selon la surface, le détail et la fréquence voulus.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 1. Raster à plusieurs bandes ===== -->
+      <section class="lecon-section" aria-labelledby="bandes-titre">
+        <h2 id="bandes-titre">Un raster à plusieurs bandes</h2>
+        <p>Vous connaissez le raster : une grille de pixels. Dans une image de télédétection, chaque pixel ne porte pas une, mais <strong>plusieurs valeurs</strong>, une par <strong>bande spectrale</strong>. Chaque bande est une image à part entière, qui mesure la lumière dans un intervalle précis de longueurs d'onde : le bleu, le vert, le rouge, mais aussi le <strong>proche infrarouge</strong>, invisible pour l'œil.</p>
+        <p>Chaque matériau renvoie la lumière à sa façon selon la bande. Cette « empreinte » s'appelle sa <strong>signature spectrale</strong>. C'est elle qui permet de distinguer l'eau, la végétation et le sol nu.</p>
+      </section>
+
+      <!-- ===== 2. Quatre résolutions ===== -->
+      <section class="lecon-section" aria-labelledby="resolutions-titre">
+        <h2 id="resolutions-titre">Les quatre résolutions</h2>
+        <p>On décrit une image satellite par quatre « résolutions » :</p>
+        <ul>
+          <li><strong>spatiale</strong> : la taille d'un pixel au sol (10 m pour Sentinel-2, 30 m pour Landsat) ;</li>
+          <li><strong>spectrale</strong> : le nombre et la finesse des bandes (13 bandes pour Sentinel-2, 11 pour Landsat 8 et 9) ;</li>
+          <li><strong>temporelle</strong> : le délai entre deux passages au-dessus d'un même endroit (environ 5 jours pour Sentinel-2, 16 jours pour un satellite Landsat) ;</li>
+          <li><strong>radiométrique</strong> : le nombre de niveaux de valeurs qu'un pixel peut prendre (8 bits donnent 256 niveaux, 12 bits donnent 4 096 niveaux).</li>
+        </ul>
+        <p>On ne peut pas tout avoir en même temps : un capteur très détaillé couvre une bande de terrain étroite (la <em>fauchée</em>) et repasse moins souvent. Il faut toujours choisir un compromis.</p>
+      </section>
+
+      <!-- ===== 3. Démo A : résolution spatiale ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="demoa-titre">
+        <h2 id="demoa-titre">À vous de jouer : la taille du pixel</h2>
+        <p>Voici une scène fictive de 300 m sur 300 m : des champs, une rivière large de 22 m, une route de 8 m et un petit village de maisons de 10 m de côté. Changez la taille du pixel et regardez ce qui survit.</p>
+
+        <div class="demo">
+          <div class="demo-controle" style="margin-top:0">
+            <label for="taille-pixel">Taille du pixel</label>
+            <input type="range" id="taille-pixel" min="0" max="7" step="1" value="3" aria-describedby="texte-pixel">
+            <output id="valeur-pixel" for="taille-pixel"></output>
+          </div>
+
+          <canvas id="scene-a" class="scene" role="img" aria-label="Scène fictive rendue avec des pixels de la taille choisie"></canvas>
+          <div class="barre-echelle" aria-hidden="true"><div class="trait-echelle" style="width:33.33%">100 m</div></div>
+
+          <p class="demo-message" id="texte-pixel" aria-live="polite" style="min-height:6em"></p>
+        </div>
+
+        <p>Quand un pixel contient plusieurs surfaces (un toit et la terre qui l'entoure, par exemple), sa valeur est une <strong>moyenne</strong> : on parle de <strong>pixel mixte</strong>. Plus le pixel est grand, plus il y en a.</p>
+      </section>
+
+      <!-- ===== 4. Démo B : bandes spectrales ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="demob-titre">
+        <h2 id="demob-titre">À vous de jouer : les bandes spectrales</h2>
+        <p>Voici la même scène, avec des pixels de 3 m. Choisissez une bande pour la voir en niveaux de gris : plus un pixel est clair, plus la surface réfléchit la lumière dans cette bande. Cliquez ensuite sur l'image, ou sur un bouton de surface, pour lire sa <strong>signature spectrale</strong>. Les valeurs sont des ordres de grandeur simplifiés.</p>
+
+        <div class="demo">
+          <div class="onglets" role="group" aria-label="Choisir la bande affichée" id="boutons-bandes"></div>
+
+          <div class="demo-panneaux">
+            <div>
+              <canvas id="scene-b" class="scene" role="img" aria-label="Scène fictive affichée dans la bande choisie"></canvas>
+            </div>
+            <div>
+              <div class="onglets" role="group" aria-label="Choisir une surface" id="boutons-surfaces"></div>
+              <div class="barres" id="barres" role="img" aria-label="Réflectance de la surface choisie dans les quatre bandes"></div>
+            </div>
+          </div>
+
+          <p class="demo-message" id="texte-bande" aria-live="polite" style="min-height:5em"></p>
+          <p class="demo-message" id="texte-signature" aria-live="polite" style="min-height:3em;margin-top:0.25rem"></p>
+        </div>
+      </section>
+
+      <!-- ===== 5. Capteurs ===== -->
+      <section class="lecon-section" style="max-width:none" aria-labelledby="capteurs-titre">
+        <h2 id="capteurs-titre">Quelques capteurs à connaître</h2>
+        <p class="indice-defilement">Faites défiler le tableau vers la droite pour voir toutes les colonnes.</p>
+        <div class="tableau-defile" tabindex="0" role="region" aria-label="Tableau des capteurs, défilant horizontalement">
+          <table class="comparatif">
+            <caption>Quatre familles d'images</caption>
+            <thead>
+              <tr>
+                <th scope="col">Capteur</th>
+                <th scope="col">Résolution spatiale</th>
+                <th scope="col">Passage</th>
+                <th scope="col">Bandes</th>
+                <th scope="col">Accès</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Sentinel-2 (Copernicus)</th>
+                <td>10 m (visible et proche infrarouge), 20 m ou 60 m pour d'autres bandes</td>
+                <td>Environ 5 jours</td>
+                <td>13</td>
+                <td>Gratuit</td>
+              </tr>
+              <tr>
+                <th scope="row">Landsat 8 et 9 (NASA, USGS)</th>
+                <td>30 m (15 m pour le panchromatique, 100 m pour le thermique)</td>
+                <td>16 jours par satellite, environ 8 jours à deux</td>
+                <td>11</td>
+                <td>Gratuit</td>
+              </tr>
+              <tr>
+                <th scope="row">MODIS (NASA)</th>
+                <td>250 m à 1 km</td>
+                <td>Chaque jour</td>
+                <td>36</td>
+                <td>Gratuit</td>
+              </tr>
+              <tr>
+                <th scope="row">Images commerciales très haute résolution</th>
+                <td>De 30 cm à 1 m</td>
+                <td>Programmé à la demande</td>
+                <td>Peu (4 à 8)</td>
+                <td>Payant</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===== 6. Choisir ===== -->
+      <section class="lecon-section" aria-labelledby="choisir-titre">
+        <h2 id="choisir-titre">Choisir sa source</h2>
+        <ul>
+          <li><strong>Suivre la végétation d'un pays, chaque semaine</strong> : une grande fauchée et un passage fréquent, donc Sentinel-2 ou MODIS.</li>
+          <li><strong>Reconstituer l'évolution d'une ville sur plusieurs décennies</strong> : les archives de Landsat, qui remontent à plus de 40 ans.</li>
+          <li><strong>Compter les toits d'un quartier</strong> : une image à très haute résolution, ou un drone.</li>
+        </ul>
+        <div class="piege">
+          <strong>Les nuages gênent.</strong> Les satellites optiques ne voient pas à travers les nuages, ce qui compte beaucoup en saison des pluies. Les satellites <em>radar</em>, comme Sentinel-1, traversent les nuages : ils complètent les images optiques.
+        </div>
+      </section>
+
+      <!-- ===== 7. À retenir ===== -->
+      <section class="retenir" aria-labelledby="retenir-titre">
+        <h2 id="retenir-titre">À retenir</h2>
+        <ul>
+          <li>Une image satellite est un raster à plusieurs bandes spectrales, dont chacune mesure la lumière dans un intervalle précis.</li>
+          <li>Quatre résolutions : spatiale, spectrale, temporelle et radiométrique. Elles se font concurrence.</li>
+          <li>Chaque surface a une signature spectrale : la végétation est très brillante dans le proche infrarouge, l'eau y est presque noire.</li>
+        </ul>
+      </section>
+
+      <!-- ===== 8. Quiz ===== -->
+      <section class="lecon-section" id="quiz" aria-labelledby="quiz-titre">
+        <h2 id="quiz-titre">Quiz du module</h2>
+        <p>Quatre questions pour vérifier que c'est bien clair. Il faut au moins 3 bonnes réponses pour valider le module.</p>
+        <div id="quiz-conteneur" class="quiz"></div>
+      </section>
+
+      <nav class="nav-modules" aria-label="Navigation entre les modules">
+        <a class="nav-precedent" href="intermediaire-analyse-spatiale.html" rel="prev"><span class="nav-etiquette">Module précédent</span>L'analyse spatiale</a>
+        <a class="nav-suivant" href="intermediaire-ndvi.html" rel="next"><span class="nav-etiquette">Module suivant</span>Compositions colorées et NDVI</a>
+      </nav>
+
+    </div>
+  </main>
+
+  <footer class="pied">
+    <div class="conteneur">
+      <p>Géo Nakama : un projet pour apprendre la géomatique par l'image.</p>
+    </div>
+  </footer>
+
+  <script src="../js/progress.js"></script>
+  <script src="../js/quiz.js"></script>
+
+  <script>
+    if (!Progression.estValide("debutant-quiz-final")) {
+      document.getElementById("avis-niveau").hidden = false;
+    }
+  </script>
+
+  <!-- Les questions de CE module -->
+  <script>
+    creerQuiz(document.getElementById("quiz-conteneur"), {
+      id: "intermediaire-images-satellites",
+      seuil: 3,
+      questions: [
+        {
+          enonce: "Que désigne la résolution spatiale d'une image ?",
+          choix: [
+            "Le nombre de bandes de l'image",
+            "La taille d'un pixel sur le terrain",
+            "Le nombre de jours entre deux images",
+            "Le nombre de couleurs de l'image"
+          ],
+          bonne: 1,
+          explication: "La résolution spatiale est la taille d'un pixel au sol : 10 m pour Sentinel-2, 30 m pour Landsat. Le nombre de bandes, c'est la résolution spectrale, et le délai entre deux images, la résolution temporelle."
+        },
+        {
+          enonce: "Sur une image à pixels de 30 m, que devient une maison de 10 m de côté ?",
+          choix: [
+            "Elle apparaît nette sur 9 pixels",
+            "Elle devient plus grande qu'un pixel",
+            "Elle est mélangée à son environnement dans un pixel : c'est un pixel mixte",
+            "Elle est automatiquement supprimée de l'image"
+          ],
+          bonne: 2,
+          explication: "Un pixel de 30 m couvre 900 m² : la maison n'en occupe qu'une petite partie, et la valeur du pixel est une moyenne de tout ce qu'il contient."
+        },
+        {
+          enonce: "Dans quelle bande une végétation en bonne santé apparaît-elle très brillante ?",
+          choix: ["Le proche infrarouge", "Le bleu", "Le rouge", "Le vert"],
+          bonne: 0,
+          explication: "La végétation réfléchit très fortement le proche infrarouge, alors qu'elle absorbe le rouge et le bleu pour la photosynthèse. Cet écart est à la base de l'indice NDVI."
+        },
+        {
+          enonce: "Quelle source choisir pour suivre l'état de la végétation d'un pays entier toutes les semaines, gratuitement ?",
+          choix: [
+            "Une image commerciale à 50 cm, commandée une fois",
+            "Une photo de drone par région",
+            "Un relevé GPS sur le terrain",
+            "Des images Sentinel-2 ou MODIS, gratuites et régulières"
+          ],
+          bonne: 3,
+          explication: "Sentinel-2 (environ tous les 5 jours) et MODIS (chaque jour) couvrent de très grandes surfaces, gratuitement et régulièrement. Les autres choix couvrent trop peu ou ne se répètent pas."
+        }
+      ]
+    });
+  </script>
+
+  <!-- Script des démonstrations : une scène fictive vue à différentes résolutions et dans différentes bandes -->
+  <script>
+    const TAILLE = 300;   // la scène mesure 300 m sur 300 m
+
+    // Chaque surface renvoie la lumière à sa façon : une valeur de réflectance (0 à 1) par bande.
+    // Ordre : bleu, vert, rouge, proche infrarouge. Valeurs simplifiées, pour l'illustration.
+    const BANDES = ["Bleu", "Vert", "Rouge", "Proche infrarouge"];
+    const SURFACES = {
+      eau:        { nom: "Eau",                   refl: [0.08, 0.07, 0.04, 0.02] },
+      vegDense:   { nom: "Végétation dense",      refl: [0.04, 0.09, 0.05, 0.50] },
+      vegCulture: { nom: "Culture en croissance", refl: [0.05, 0.10, 0.08, 0.38] },
+      sol:        { nom: "Sol nu",                refl: [0.12, 0.16, 0.22, 0.28] },
+      savane:     { nom: "Savane sèche",          refl: [0.08, 0.12, 0.16, 0.26] },
+      route:      { nom: "Route",                 refl: [0.22, 0.24, 0.26, 0.28] },
+      toit:       { nom: "Toit",                  refl: [0.18, 0.20, 0.30, 0.32] }
+    };
+
+    // Les cinq maisons : coin supérieur gauche de chacune (10 m x 10 m)
+    const MAISONS = [[45, 158], [62, 172], [80, 156], [95, 180], [52, 190]];
+
+    // Les parcelles : la première qui contient le point l'emporte
+    const PARCELLES = [
+      { x0: 35,  x1: 115, y0: 150, y1: 205, c: "sol" },          // la cour du village
+      { x0: 0,   x1: 140, y0: 0,   y1: 118, c: "vegDense" },
+      { x0: 0,   x1: 125, y0: 150, y1: 300, c: "vegCulture" },
+      { x0: 255, x1: 300, y0: 0,   y1: 105, c: "vegDense" },
+      { x0: 250, x1: 300, y0: 150, y1: 300, c: "sol" },
+      { x0: 140, x1: 190, y0: 165, y1: 300, c: "sol" }
+    ];
+
+    // Quelle surface se trouve au point (x, y) de la scène ? (en mètres)
+    function surfaceEn(x, y) {
+      for (let i = 0; i < MAISONS.length; i++) {
+        const m = MAISONS[i];
+        if (x >= m[0] && x < m[0] + 10 && y >= m[1] && y < m[1] + 10) return "toit";
+      }
+      // la route : une droite de 8 m de large, qui traverse la rivière (comme sur un pont)
+      if (Math.abs(y - (140 - 0.1 * x)) / Math.sqrt(1.01) < 4) return "route";
+      // la rivière : une bande sinueuse de 22 m de large
+      const xc = 215 + 30 * Math.sin(y / 45);
+      if (Math.abs(x - xc) < 11) return "eau";
+      for (let i = 0; i < PARCELLES.length; i++) {
+        const p = PARCELLES[i];
+        if (x >= p.x0 && x < p.x1 && y >= p.y0 && y < p.y1) return p.c;
+      }
+      return "savane";
+    }
+
+    function borner(v) { return Math.max(0, Math.min(255, Math.round(v))); }
+    // Étire une réflectance pour l'afficher en couleur (une courbe douce, comme un réglage de luminosité)
+    function teinte(refl) { return borner(Math.pow(refl / 0.35, 0.6) * 255); }
+
+    // Dessine la scène dans un canvas, avec des pixels de `pas` mètres.
+    // mode : "couleur" (rouge, vert, bleu) ou le numéro d'une bande (0 à 3) en niveaux de gris.
+    function dessiner(canvas, pas, mode) {
+      const n = Math.round(TAILLE / pas);
+      canvas.width = n;
+      canvas.height = n;
+      const ctx = canvas.getContext("2d");
+      const image = ctx.createImageData(n, n);
+      const sousPas = pas <= 2 ? 2 : 4;      // on moyenne plusieurs mesures par pixel : c'est ce que fait un capteur
+
+      for (let j = 0; j < n; j++) {
+        for (let i = 0; i < n; i++) {
+          const somme = [0, 0, 0, 0];
+          for (let sj = 0; sj < sousPas; sj++) {
+            for (let si = 0; si < sousPas; si++) {
+              const x = (i + (si + 0.5) / sousPas) * pas;
+              const y = (j + (sj + 0.5) / sousPas) * pas;
+              const refl = SURFACES[surfaceEn(x, y)].refl;
+              for (let b = 0; b < 4; b++) somme[b] += refl[b];
+            }
+          }
+          const nb = sousPas * sousPas;
+          const moy = somme.map(function (s) { return s / nb; });
+
+          let r, g, bl;
+          if (mode === "couleur") {
+            r = teinte(moy[2]); g = teinte(moy[1]); bl = teinte(moy[0]);
+          } else {
+            r = g = bl = borner(Math.pow(moy[mode] / 0.55, 0.6) * 255);   // même réglage de luminosité que la couleur
+          }
+          const k = (j * n + i) * 4;
+          image.data[k] = r; image.data[k + 1] = g; image.data[k + 2] = bl; image.data[k + 3] = 255;
+        }
+      }
+      ctx.putImageData(image, 0, 0);
+    }
+
+    // ---------- Démonstration A : la taille du pixel ----------
+    const PAS = [1, 2, 5, 10, 20, 30, 50, 100];
+    const TEXTES_PAS = {
+      1:   "Pixel de 1 m, comme un drone ou une image commerciale. Chaque maison, la route et la rivière ont des bords nets.",
+      2:   "Pixel de 2 m. Les maisons restent bien visibles et les bords sont encore précis.",
+      5:   "Pixel de 5 m. Les maisons ne sont plus que quelques pixels, mais la route et la rivière restent nettes.",
+      10:  "Pixel de 10 m, comme Sentinel-2. Chaque maison tient dans un ou deux pixels mélangés à la terre autour. La route de 8 m est encore visible, mais élargie et pâle.",
+      20:  "Pixel de 20 m. Les maisons se fondent dans le village, et la route devient floue : il y a de plus en plus de pixels mixtes.",
+      30:  "Pixel de 30 m, comme Landsat. Le village n'est plus qu'une tache, et la route un trait très pâle. La rivière, large de 22 m, se devine encore.",
+      50:  "Pixel de 50 m. Les grands champs restent lisibles, mais la rivière n'est plus qu'une suite de pixels grisâtres, et la route a disparu.",
+      100: "Pixel de 100 m. On ne distingue plus que les grands ensembles : tout ce qui est plus petit que le pixel est noyé."
+    };
+
+    const curseurPixel = document.getElementById("taille-pixel");
+    const sceneA = document.getElementById("scene-a");
+    const valeurPixel = document.getElementById("valeur-pixel");
+    const textePixel = document.getElementById("texte-pixel");
+
+    function majPixel() {
+      const pas = PAS[Number(curseurPixel.value)];
+      const n = Math.round(TAILLE / pas);
+      dessiner(sceneA, pas, "couleur");
+      valeurPixel.textContent = pas + " m";
+      textePixel.textContent = TEXTES_PAS[pas] + " L'image compte " + n + " × " + n + " pixels.";
+    }
+    curseurPixel.addEventListener("input", majPixel);
+
+    // ---------- Démonstration B : les bandes spectrales ----------
+    const PAS_B = 3;
+    const sceneB = document.getElementById("scene-b");
+    const zoneBoutonsBandes = document.getElementById("boutons-bandes");
+    const zoneBoutonsSurfaces = document.getElementById("boutons-surfaces");
+    const zoneBarres = document.getElementById("barres");
+    const texteBande = document.getElementById("texte-bande");
+    const texteSignature = document.getElementById("texte-signature");
+
+    const MODES = [
+      { mode: "couleur", nom: "Vraies couleurs",
+        texte: "Vraies couleurs : on affiche les bandes rouge, verte et bleue, comme le verrait un œil humain." },
+      { mode: 0, nom: "Bleu",
+        texte: "Bande bleue : presque tout est sombre, et la végétation, l'eau et les champs se ressemblent. Cette bande sert aussi à corriger l'effet de l'atmosphère." },
+      { mode: 1, nom: "Vert",
+        texte: "Bande verte : la végétation en reflète un peu plus que du bleu, ce qui explique qu'elle nous paraisse verte, mais elle reste sombre." },
+      { mode: 2, nom: "Rouge",
+        texte: "Bande rouge : la végétation absorbe le rouge pour la photosynthèse, elle est donc sombre. Les sols nus, les toits et la route sont plus clairs." },
+      { mode: 3, nom: "Proche infrarouge",
+        texte: "Proche infrarouge : la végétation devient très brillante, alors que l'eau est presque noire. Le contraste entre le rouge et le proche infrarouge est la base de l'indice NDVI, vu dans le module suivant." }
+    ];
+
+    let modeActuel = 0;
+    let surfaceActuelle = "vegDense";
+    const boutonsModes = [], boutonsSurfaces = {};
+
+    MODES.forEach(function (m, i) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "onglet";
+      b.textContent = m.nom;
+      b.addEventListener("click", function () { choisirMode(i); });
+      boutonsModes.push(b);
+      zoneBoutonsBandes.appendChild(b);
+    });
+
+    ["eau", "vegDense", "sol", "route", "toit"].forEach(function (cle) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "onglet";
+      b.textContent = SURFACES[cle].nom;
+      b.addEventListener("click", function () { choisirSurface(cle); });
+      boutonsSurfaces[cle] = b;
+      zoneBoutonsSurfaces.appendChild(b);
+    });
+
+    function choisirMode(i) {
+      modeActuel = i;
+      boutonsModes.forEach(function (b, k) { b.setAttribute("aria-pressed", k === i ? "true" : "false"); });
+      dessiner(sceneB, PAS_B, MODES[i].mode);
+      texteBande.textContent = MODES[i].texte;
+    }
+
+    function choisirSurface(cle) {
+      surfaceActuelle = cle;
+      Object.keys(boutonsSurfaces).forEach(function (k) {
+        boutonsSurfaces[k].setAttribute("aria-pressed", k === cle ? "true" : "false");
+      });
+
+      const s = SURFACES[cle];
+      zoneBarres.replaceChildren();
+      s.refl.forEach(function (valeur, b) {
+        const col = document.createElement("div");
+        col.className = "barres-col";
+        const val = document.createElement("span");
+        val.className = "valeur";
+        val.textContent = Math.round(valeur * 100) + " %";
+        const barre = document.createElement("div");
+        barre.className = "barre" + (b === 3 ? " pir" : "");
+        barre.style.height = (valeur / 0.55 * 100).toFixed(0) + "%";
+        const nom = document.createElement("span");
+        nom.className = "nom";
+        nom.textContent = BANDES[b];
+        col.appendChild(val);
+        col.appendChild(barre);
+        col.appendChild(nom);
+        zoneBarres.appendChild(col);
+      });
+
+      texteSignature.textContent = "Signature de « " + s.nom + " » : " + BANDES.map(function (nomBande, b) {
+        return nomBande.toLowerCase() + " " + Math.round(s.refl[b] * 100) + " %";
+      }).join(", ") + ".";
+    }
+
+    // Un clic sur l'image donne la signature de la surface située à cet endroit
+    sceneB.addEventListener("click", function (e) {
+      const r = sceneB.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width * TAILLE;
+      const y = (e.clientY - r.top) / r.height * TAILLE;
+      const cle = surfaceEn(x, y);
+      // Les boutons ne proposent que cinq surfaces : on les met à jour si la surface cliquée en fait partie
+      choisirSurface(cle);
+    });
+
+    majPixel();
+    choisirMode(0);
+    choisirSurface("vegDense");
+  </script>
+
+</body>
+</html>
